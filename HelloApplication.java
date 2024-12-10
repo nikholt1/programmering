@@ -223,14 +223,41 @@ public class HelloApplication extends Application {
         button2.setMaxWidth(Double.MAX_VALUE);
         button3.setMaxWidth(Double.MAX_VALUE);
 
+
+        ListView<String> listView = new ListView<>();
+        listView.setPrefHeight(400);
+        String filePath = "C:\\Users\\Niklas Holt Läu\\Documents\\GUIFX\\src\\test2.csv";
+
+        // Initial population of ListView
+        List<String> csvData = readCSV(filePath);
+        ObservableList<String> items = FXCollections.observableArrayList(csvData);
+        listView.setItems(items);
+        
+        
         // Add the buttons to the root
         root.getChildren().add(buttonBox);
         root.setAlignment(Pos.BOTTOM_CENTER);
         root.setPrefHeight(800);
         root.setStyle("-fx-background-color: #808080;");
 
+        Timer timer = new Timer(true); // Daemon thread
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    List<String> updatedData = readCSV(filePath);
+                    listView.setItems(FXCollections.observableArrayList(updatedData)); // Refresh the ListView
+                    System.out.println("Data refreshed: " + updatedData); // Debug log
+                });
+            }
+        }, 0, 1000);
+
+
         // Set actions for the buttons
-        button1.setOnAction(event -> changeScenePPS(root, newContent));
+        button1.setOnAction(event -> {
+            String command = "gnome-terminal -- sudo python /path/to/DOBBYPerPacketsSecond.py";
+            runPythonScript(command);
+        });  // Keeping the scene the same
         button2.setOnAction(event -> changeScenePPS(root, newContent));
         button3.setOnAction(event -> initializeMainScene(root, new Text("MAIN")));
   // Go back to the main scene
