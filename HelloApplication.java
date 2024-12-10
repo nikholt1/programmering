@@ -1,4 +1,3 @@
-package com.example.guifx;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -38,7 +37,7 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 
 
-public class HelloApplication extends Application {
+public class GUI2 extends Application {
     @Override
     public void start(Stage stage) {
         // Initialize the VBox and other UI elements
@@ -157,7 +156,7 @@ public class HelloApplication extends Application {
         //Creating ListVew to display CSV
         ListView<String> listView = new ListView<>();
         listView.setPrefHeight(400);
-        String filePath = "C:\\Users\\Niklas Holt Läu\\Documents\\GUIFX\\src\\test2.csv";
+        String filePath = "/home/User1/Desktop/DOBBYprgrm/test2.csv";
 
         // Initial population of ListView
         List<String> csvData = readCSV(filePath);
@@ -186,7 +185,7 @@ public class HelloApplication extends Application {
 
         // Set actions for the new buttons
         button1.setOnAction(event -> {
-            String command = "gnome-terminal -e 'sudo python DOBBYMacAndLog.py'";
+            String command = "sudo gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYMacAndLog.py";
             runPythonScript(command);
         });  // Keeping the scene the same
         button2.setOnAction(event -> changeSceneMACLOG(root, newContent));
@@ -226,7 +225,7 @@ public class HelloApplication extends Application {
 
         ListView<String> listView = new ListView<>();
         listView.setPrefHeight(400);
-        String filePath = "C:\\Users\\Niklas Holt Läu\\Documents\\GUIFX\\src\\test2.csv";
+        String filePath = "/home/User1/Desktop/DOBBYprgrm/test2.csv";
 
         // Initial population of ListView
         List<String> csvData = readCSV(filePath);
@@ -255,13 +254,14 @@ public class HelloApplication extends Application {
 
         // Set actions for the buttons
         button1.setOnAction(event -> {
-            String command = "gnome-terminal -- sudo python /path/to/DOBBYPerPacketsSecond.py";
+            String command = "sudo gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYPerPacketsSecond.py";
             runPythonScript(command);
         });  // Keeping the scene the same
         button2.setOnAction(event -> changeScenePPS(root, newContent));
         button3.setOnAction(event -> initializeMainScene(root, new Text("MAIN")));
   // Go back to the main scene
     }
+
 
 
     private void changeSceneTRACK(VBox root, Text newContent) {
@@ -290,7 +290,7 @@ public class HelloApplication extends Application {
         //Creating ListVew to display CSV
         ListView<String> listView = new ListView<>();
         listView.setPrefHeight(400);
-        String filePath = "C:\\Users\\Niklas Holt Läu\\Documents\\GUIFX\\src\\test.csv";
+        String filePath = "/home/User1/Desktop/DOBBYprgrm/test.csv";
         List<String> csvData = readCSV(filePath);
         System.out.println(csvData);
         ObservableList<String> items = FXCollections.observableArrayList(csvData);
@@ -370,7 +370,7 @@ public class HelloApplication extends Application {
 
     private void runPythonScript(String command) {
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder(command.split(""));
+            ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
             processBuilder.start();
 
         } catch (IOException e) {
