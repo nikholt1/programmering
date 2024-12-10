@@ -2,6 +2,7 @@ import sys
 import time
 import subprocess
 import select
+import datetime
 from scapy.all import *
 import csv
 #import fourletterphat as flp
@@ -26,7 +27,7 @@ print("\n\n\n   PLLY Product")
 
 
 detected_macs = []
-current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 filename  = f"MacLog_{current_time}.csv"
 def main():
     try:
@@ -101,5 +102,5 @@ def load():
             #flp.print_str(state)
             #flp.show()
             time.sleep(0.2)
-if __name__ == "main":
+if __name__ == "__main__":
     main()
