@@ -1,3 +1,4 @@
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -22,6 +23,8 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListView;
+import javafx.beans.property.StringProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import java.io.*;
 import java.util.Timer;
@@ -39,8 +42,11 @@ import javafx.application.Platform;
 
 
 public class GUI2 extends Application {
+        
+    private Stage primaryStage;     
     @Override
     public void start(Stage stage) {
+        this.primaryStage = stage;    
         // set stage always on top, to overlap gnome terminals in methods
         stage.setAlwaysOnTop(true);
         stage.requestFocus();
@@ -202,7 +208,7 @@ public class GUI2 extends Application {
         //Creating ListVew to display CSV
         ListView<String> listView = new ListView<>();
         listView.setPrefHeight(400);
-        String filePath = "/home/User1/Desktop/DOBBYprgrm/test2.csv";
+        String filePath = "/home/User1/Desktop/DOBBYprgrm/MacLog.csv";
 
         // Initial population of ListView
         List<String> csvData = readCSV(filePath);
@@ -272,8 +278,10 @@ public class GUI2 extends Application {
 
         // Go back to the main scene
     }
-
+    
     private void changeScenePPS(Stage stage, VBox root, Text newContent) {
+        
+        
         stage.setAlwaysOnTop(true);
         stage.requestFocus();
         
@@ -305,7 +313,7 @@ public class GUI2 extends Application {
 
         ListView<String> listView = new ListView<>();
         listView.setPrefHeight(400);
-        String filePath = "/home/User1/Desktop/DOBBYprgrm/test2.csv";
+        String filePath = "/home/User1/Desktop/DOBBYprgrm/MacLog.csv";
 
         // Initial population of ListView
         List<String> csvData = readCSV(filePath);
@@ -351,12 +359,13 @@ public class GUI2 extends Application {
 
         // Set actions for the buttons
         button1.setOnAction(event -> {
-            stage.requestFocus();
-            System.out.println("stage PPS requested Focus to overlay gnome-terminal");
+
             
             String command = "gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYPerPacketsSecond.py &";
             gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
             System.out.println("Terminal started");
+            primaryStage.requestFocus();
+            System.out.println("PPS requested focus");
 
         });  // Keeping the scene the same
         button2.setOnAction(event -> {
@@ -379,7 +388,8 @@ public class GUI2 extends Application {
         // Clear the existing content
         root.getChildren().clear();
 
-
+        final StringProperty selectedItemProperty = new SimpleStringProperty();
+        Label selectedLabel = new Label("Selected: None");
         Button button1 = new Button("START");
         Button button2 = new Button("STOP");
         Button button3 = new Button("BACK");
@@ -401,7 +411,7 @@ public class GUI2 extends Application {
         //Creating ListVew to display CSV
         ListView<String> listView = new ListView<>();
         listView.setPrefHeight(400);
-        String filePath = "/home/User1/Desktop/DOBBYprgrm/test.csv";
+        String filePath = "/home/User1/Desktop/DOBBYprgrm/MacLog.csv";
         List<String> csvData = readCSV(filePath);
         System.out.println(csvData);
         ObservableList<String> items = FXCollections.observableArrayList(csvData);
@@ -432,10 +442,41 @@ public class GUI2 extends Application {
             }
         });        
         
+
         
+        listView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if(newSelection != null) {
+                
+                String[] parts = newSelection.split(",", 2);
+                String processedItem = parts.length > 1 ? parts[1].trim() : "";
+                
+                selectedItemProperty.set(processedItem);
+                selectedLabel.setText("Selected: " + processedItem);
+                
+            } else {
+                selectedItemProperty.set(null);
+                selectedLabel.setText("Selected: None");
+            
+            } 
+        
+        }); 
 
         // Set actions for the new buttons
-        button1.setOnAction(event -> changeSceneTRACK(stage, root, newContent));  // Keeping the scene the same
+        button1.setOnAction(event -> {
+            String selectedItem = selectedItemProperty.get();
+            if (selectedItem != null && !selectedItem.isEmpty()) {
+                System.out.println("Selected Item: " + selectedItem);  
+                String command = "echo hello";
+                gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
+                System.out.println("Terminal started");
+                primaryStage.requestFocus();
+                System.out.println("PPS requested focus");                                 
+            
+            
+            }    
+        
+        
+        });  // Keeping the scene the same
         button2.setOnAction(event -> changeSceneTRACK(stage, root, newContent));
         button3.setOnAction(event -> changeSceneTrainer(stage, root, new Text("BACK")));
         // Go back to the main scene
@@ -587,5 +628,4 @@ public class GUI2 extends Application {
         launch(args);
     }
 }
-
 
