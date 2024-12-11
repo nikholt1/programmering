@@ -22,15 +22,13 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListView;
+
+import java.io.*;
 import java.util.Timer;
 
 import java.lang.Process;
 import java.lang.ProcessBuilder;
 
-import java.io.IOException;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
@@ -130,7 +128,7 @@ public class GUI2 extends Application {
         button1.setOnAction(event -> changeSceneTRAIN(root, new Text("TRAINING")));  // Keeping the scene the same
         button2.setOnAction(event -> changeSceneTRACK(root, new Text("TRACKING")));
         button3.setOnAction(event -> initializeMainScene(root, new Text("MAIN")));
-  // Go back to the main scene
+        // Go back to the main scene
     }
 
     private void changeSceneMACLOG(VBox root, Text newContent) {
@@ -188,25 +186,21 @@ public class GUI2 extends Application {
 
         // Set actions for the new buttons
         button1.setOnAction(event -> {
-            String command = "sudo gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYMacAndLog.py";
-            pythonProcess = runPythonScript(command);
-            System.out.println("Terminal Started");
+            String command = "sudo gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYPerPacketsSecond.py";
+            gnomeTerminalPid = startGnomeTerminalAndGetPid(command);
+            System.out.println("Terminal started");
         });  // Keeping the scene the same
         button2.setOnAction(event -> {
-            if (pythonProcess != null && pythonProcess.isAlive()) {
-                pythonProcess.destroy();
-                System.out.println("Python Process Terminated Mac And Log");
-            
-            } else {
-                System.out.println("No Running Terminals To Terminate");
-            }    
-        
+            if (gnomeTerminalPid != null) {
+                KillGnomeTerminal(gnomeTerminalPid);
+                gnomeTerminalPid = null;
+            }
         });
         button3.setOnAction(event -> {
             timer.cancel();
             initializeMainScene(root, new Text("MAIN"));
-  
-        });  
+
+        });
         // Go back to the main scene
     }
 
@@ -245,8 +239,8 @@ public class GUI2 extends Application {
         List<String> csvData = readCSV(filePath);
         ObservableList<String> items = FXCollections.observableArrayList(csvData);
         listView.setItems(items);
-        
-        
+
+
         // Add the buttons to the root
         root.getChildren().add(buttonBox);
         root.setAlignment(Pos.BOTTOM_CENTER);
@@ -266,24 +260,26 @@ public class GUI2 extends Application {
         }, 0, 1000);
 
 
-        
+
 
         // Set actions for the buttons
         button1.setOnAction(event -> {
             String command = "sudo gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYPerPacketsSecond.py";
-            pythonProcess = runPythonScript(command);
-            System.out.println("Terminal started" + pythonProcess);
+            gnomeTerminalPid = startGnomeTerminalAndGetPid(command);
+            System.out.println("Terminal started");
         });  // Keeping the scene the same
         button2.setOnAction(event -> {
-            String commandKill = "killall gnome-terminal";
-            runCommand(commandKill);
+            if (gnomeTerminalPid != null) {
+                KillGnomeTerminal(gnomeTerminalPid);
+                gnomeTerminalPid = null;
+            }
         });
         button3.setOnAction(event -> {
             timer.cancel();
             initializeMainScene(root, new Text("MAIN"));
-  
-        });  
-  // Go back to the main scene
+
+        });
+        // Go back to the main scene
     }
 
 
@@ -391,31 +387,67 @@ public class GUI2 extends Application {
         return data;
     }
 
-    private Process pythonProcess;
-        
-    private Process runPythonScript(String command) {
+//    private Process pythonProcess;
+    private Long gnomeTerminalPid;
+
+    private Long startGnomeTerminalAndGetPid(String command) {
         try {
+            // Start the gnome-terminal
             ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
-            Process process = processBuilder.start();
-            return process;
+            processBuilder.start();
+
+            // Use 'ps' to get the PID of the most recent gnome-terminal process
+            Process psProcess = new ProcessBuilder("bash", "-c", "ps -eo pid,comm | grep gnome-terminal | tail -1 | awk '{print $1}'").start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(psProcess.getInputStream()));
+
+            String pidString = reader.readLine();
+            if (pidString != null && !pidString.isEmpty()) {
+                System.out.println("Started gnome-terminal with PID: " + pidString);
+                return Long.parseLong(pidString.trim()); // Return the PID as a Long
+            } else {
+                System.out.println("Failed to retrieve gnome-terminal PID.");
+                return null; // No PID found, return null
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return null; // Exception occurred, return null
         }
     }
-    
+    private void KillGnomeTerminal(long pid) {
+        try {
+            String Killcommand = "kill -9 " + pid;
+            ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", Killcommand);
+            processBuilder.start();
+            System.out.println("killed gnome-terminal with PID " + pid);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+//    private Process runPythonScript(String command) {
+//        try {
+//            ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
+//            Process process = processBuilder.start();
+//            return process;
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+
     private void runCommand(String commandKill) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(commandKill.split(" "));
             processBuilder.start();
             System.out.println("Killed All Gnome Terminals");
-        
+
         } catch (IOException e) {
             e.printStackTrace();
-        
+
         }
-    
+
     }
 
     public static void main(String[] args) {
