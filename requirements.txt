@@ -1,3 +1,8 @@
 gnome-terminal
 scapy
 python3
+
+
+gnome:
+gsettings set org.gnome.desktop.wm.preferences focus-new-windows 'click' 
+## to set on click in installation setup bash file.
