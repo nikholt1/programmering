@@ -24,6 +24,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ListView;
 import java.util.Timer;
 
+import java.lang.Process;
+import java.lang.ProcessBuilder;
+
 import java.io.IOException;
 
 import java.io.BufferedReader;
@@ -186,13 +189,24 @@ public class GUI2 extends Application {
         // Set actions for the new buttons
         button1.setOnAction(event -> {
             String command = "sudo gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYMacAndLog.py";
-            runPythonScript(command);
+            pythonProcess = runPythonScript(command);
+            System.out.println("Terminal Started");
         });  // Keeping the scene the same
-        button2.setOnAction(event -> changeSceneMACLOG(root, newContent));
+        button2.setOnAction(event -> {
+            if (pythonProcess != null && pythonProcess.isAlive()) {
+                pythonProcess.destroy();
+                System.out.println("Python Process Terminated Mac And Log");
+            
+            } else {
+                System.out.println("No Running Terminals To Terminate");
+            }    
+        
+        });
         button3.setOnAction(event -> {
             timer.cancel();
-            initializeMainScene(root, new Text("BACK"));
-        });
+            initializeMainScene(root, new Text("MAIN"));
+  
+        });  
         // Go back to the main scene
     }
 
@@ -252,13 +266,23 @@ public class GUI2 extends Application {
         }, 0, 1000);
 
 
+        
+
         // Set actions for the buttons
         button1.setOnAction(event -> {
             String command = "sudo gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYPerPacketsSecond.py";
-            runPythonScript(command);
+            pythonProcess = runPythonScript(command);
+            System.out.println("Terminal started" + pythonProcess);
         });  // Keeping the scene the same
-        button2.setOnAction(event -> changeScenePPS(root, newContent));
-        button3.setOnAction(event -> initializeMainScene(root, new Text("MAIN")));
+        button2.setOnAction(event -> {
+            String commandKill = "killall gnome-terminal";
+            runCommand(commandKill);
+        });
+        button3.setOnAction(event -> {
+            timer.cancel();
+            initializeMainScene(root, new Text("MAIN"));
+  
+        });  
   // Go back to the main scene
     }
 
@@ -367,18 +391,35 @@ public class GUI2 extends Application {
         return data;
     }
 
-
-    private void runPythonScript(String command) {
+    private Process pythonProcess;
+        
+    private Process runPythonScript(String command) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
-            processBuilder.start();
+            Process process = processBuilder.start();
+            return process;
 
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
+    }
+    
+    private void runCommand(String commandKill) {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(commandKill.split(" "));
+            processBuilder.start();
+            System.out.println("Killed All Gnome Terminals");
+        
+        } catch (IOException e) {
+            e.printStackTrace();
+        
+        }
+    
     }
 
     public static void main(String[] args) {
         launch(args);
     }
 }
+
