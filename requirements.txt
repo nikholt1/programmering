@@ -4,5 +4,5 @@ python3
 
 
 gnome:
-gsettings set org.gnome.desktop.wm.preferences focus-new-windows 'click' 
+set windows to only on click to disable the gnome-terminal overlap on start and stop
 ## to set on click in installation setup bash file.
