@@ -41,19 +41,23 @@ import javafx.application.Platform;
 public class GUI2 extends Application {
     @Override
     public void start(Stage stage) {
+        // set stage always on top, to overlap gnome terminals in methods
+        stage.setAlwaysOnTop(true);
+        stage.requestFocus();
         // Initialize the VBox and other UI elements
         VBox root = new VBox();
-        initializeMainScene(root, new Text("INIT"));
+        initializeMainScene(stage, root, new Text("INIT"));
 
         // Set the Scene and show the Stage
         Scene scene = new Scene(root, 800, 800);
         stage.setScene(scene);
         stage.setTitle("DOBBY GUI");
         stage.setFullScreen(true);
+
         stage.show();
     }
 
-    private void initializeMainScene(VBox root, Text newContent) {
+    private void initializeMainScene(Stage stage, VBox root, Text newContent) {
         root.getChildren().clear();
 
         // Create buttons for the main scene
@@ -86,13 +90,31 @@ public class GUI2 extends Application {
         root.setPrefHeight(800);
         root.setStyle("-fx-background-color: #808080;");
 
+
+        root.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DIGIT1:
+                    button1.fire();
+                    break;
+                case DIGIT2:
+                    button2.fire();
+                    break;
+                case DIGIT3:
+                    button3.fire();
+                    break;
+                default:
+                    break;
+            
+            }
+        });        
+
         // Set the actions for the buttons
-        button1.setOnAction(event -> changeSceneTrainer(root, new Text("SELECTED")));
-        button2.setOnAction(event -> changeSceneMACLOG(root, new Text("MACLOG")));
-        button3.setOnAction(event -> changeScenePPS(root, new Text("PACKET PER SECOND")));
+        button1.setOnAction(event -> changeSceneTrainer(stage, root, new Text("SELECTED")));
+        button2.setOnAction(event -> changeSceneMACLOG(stage, root, new Text("MACLOG")));
+        button3.setOnAction(event -> changeScenePPS(stage, root, new Text("PACKET PER SECOND")));
     }
 
-    private void changeSceneTrainer(VBox root, Text newContent) {
+    private void changeSceneTrainer(Stage stage, VBox root, Text newContent) {
         // Clear the existing content
         root.getChildren().clear();
 
@@ -123,15 +145,38 @@ public class GUI2 extends Application {
         root.setAlignment(Pos.BOTTOM_CENTER);
         root.setPrefHeight(800);
         root.setStyle("-fx-background-color: #808080;");
+        
+        
+        root.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DIGIT1:
+                    button1.fire();
+                    break;
+                case DIGIT2:
+                    button2.fire();
+                    break;
+                case DIGIT3:
+                    button3.fire();
+                    break;
+                default:
+                    break;
+            
+            }
+        });        
+        
 
         // Set actions for the new buttons
-        button1.setOnAction(event -> changeSceneTRAIN(root, new Text("TRAINING")));  // Keeping the scene the same
-        button2.setOnAction(event -> changeSceneTRACK(root, new Text("TRACKING")));
-        button3.setOnAction(event -> initializeMainScene(root, new Text("MAIN")));
+        button1.setOnAction(event -> changeSceneTRAIN(stage, root, new Text("TRAINING")));  // Keeping the scene the same
+        button2.setOnAction(event -> changeSceneTRACK(stage, root, new Text("TRACKING")));
+        button3.setOnAction(event -> initializeMainScene(stage, root, new Text("MAIN")));
         // Go back to the main scene
     }
 
-    private void changeSceneMACLOG(VBox root, Text newContent) {
+    private void changeSceneMACLOG(Stage stage, VBox root, Text newContent) {
+        stage.setAlwaysOnTop(true);
+        stage.requestFocus();
+        
+        
         // Clear the existing content
         root.getChildren().clear();
 
@@ -184,11 +229,34 @@ public class GUI2 extends Application {
         }, 0, 1000); // Initial delay = 0 ms, refresh every 1000 ms (1 seconds)
 
 
+
+        root.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DIGIT1:
+                    button1.fire();
+                    break;
+                case DIGIT2:
+                    button2.fire();
+                    break;
+                case DIGIT3:
+                    button3.fire();
+                    break;
+                default:
+                    break;
+            
+            }
+        });
+
+
         // Set actions for the new buttons
         button1.setOnAction(event -> {
-            String command = "sudo gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYPerPacketsSecond.py";
-            gnomeTerminalPid = startGnomeTerminalAndGetPid(command);
+            stage.requestFocus();
+            System.out.println("stage requested focus to overlay gnome-terminal");
+            String command = "gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYMacAndLog.py &";
+            gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
             System.out.println("Terminal started");
+            
+            
         });  // Keeping the scene the same
         button2.setOnAction(event -> {
             if (gnomeTerminalPid != null) {
@@ -198,13 +266,17 @@ public class GUI2 extends Application {
         });
         button3.setOnAction(event -> {
             timer.cancel();
-            initializeMainScene(root, new Text("MAIN"));
+            initializeMainScene(stage, root, new Text("MAIN"));
 
         });
+
         // Go back to the main scene
     }
 
-    private void changeScenePPS(VBox root, Text newContent) {
+    private void changeScenePPS(Stage stage, VBox root, Text newContent) {
+        stage.setAlwaysOnTop(true);
+        stage.requestFocus();
+        
         // Clear the existing content
         root.getChildren().clear();
 
@@ -260,13 +332,32 @@ public class GUI2 extends Application {
         }, 0, 1000);
 
 
-
+        root.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DIGIT1:
+                    button1.fire();
+                    break;
+                case DIGIT2:
+                    button2.fire();
+                    break;
+                case DIGIT3:
+                    button3.fire();
+                    break;
+                default:
+                    break;
+            
+            }
+        });
 
         // Set actions for the buttons
         button1.setOnAction(event -> {
-            String command = "sudo gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYPerPacketsSecond.py";
-            gnomeTerminalPid = startGnomeTerminalAndGetPid(command);
+            stage.requestFocus();
+            System.out.println("stage PPS requested Focus to overlay gnome-terminal");
+            
+            String command = "gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYPerPacketsSecond.py &";
+            gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
             System.out.println("Terminal started");
+
         });  // Keeping the scene the same
         button2.setOnAction(event -> {
             if (gnomeTerminalPid != null) {
@@ -276,7 +367,7 @@ public class GUI2 extends Application {
         });
         button3.setOnAction(event -> {
             timer.cancel();
-            initializeMainScene(root, new Text("MAIN"));
+            initializeMainScene(stage, root, new Text("MAIN"));
 
         });
         // Go back to the main scene
@@ -284,7 +375,7 @@ public class GUI2 extends Application {
 
 
 
-    private void changeSceneTRACK(VBox root, Text newContent) {
+    private void changeSceneTRACK(Stage stage, VBox root, Text newContent) {
         // Clear the existing content
         root.getChildren().clear();
 
@@ -323,17 +414,36 @@ public class GUI2 extends Application {
 
         root.getChildren().add(contentBox);
         root.setStyle("-fx-background-color: #808080;");
+        
+        root.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DIGIT1:
+                    button1.fire();
+                    break;
+                case DIGIT2:
+                    button2.fire();
+                    break;
+                case DIGIT3:
+                    button3.fire();
+                    break;
+                default:
+                    break;
+            
+            }
+        });        
+        
+        
 
         // Set actions for the new buttons
-        button1.setOnAction(event -> changeSceneTRACK(root, newContent));  // Keeping the scene the same
-        button2.setOnAction(event -> changeSceneTRACK(root, newContent));
-        button3.setOnAction(event -> changeSceneTrainer(root, new Text("BACK")));
+        button1.setOnAction(event -> changeSceneTRACK(stage, root, newContent));  // Keeping the scene the same
+        button2.setOnAction(event -> changeSceneTRACK(stage, root, newContent));
+        button3.setOnAction(event -> changeSceneTrainer(stage, root, new Text("BACK")));
         // Go back to the main scene
     }
 
 
 
-    private void changeSceneTRAIN(VBox root, Text newContent) {
+    private void changeSceneTRAIN(Stage stage, VBox root, Text newContent) {
         // Clear the existing content
         root.getChildren().clear();
 
@@ -365,10 +475,28 @@ public class GUI2 extends Application {
         root.setPrefHeight(800);
         root.setStyle("-fx-background-color: #f4f4f4;");
 
+        root.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DIGIT1:
+                    button1.fire();
+                    break;
+                case DIGIT2:
+                    button2.fire();
+                    break;
+                case DIGIT3:
+                    button3.fire();
+                    break;
+                default:
+                    break;
+            
+            }
+        });
+        
+
         // Set actions for the new buttons
-        button1.setOnAction(event -> changeSceneTRAIN(root, newContent));  // Keeping the scene the same
-        button2.setOnAction(event -> changeSceneTRAIN(root, newContent));
-        button3.setOnAction(event -> changeSceneTrainer(root, new Text("BACK")));
+        button1.setOnAction(event -> changeSceneTRAIN(stage, root, newContent));  // Keeping the scene the same
+        button2.setOnAction(event -> changeSceneTRAIN(stage, root, newContent));
+        button3.setOnAction(event -> changeSceneTrainer(stage, root, new Text("BACK")));
         // Go back to the main scene
     }
 
@@ -390,12 +518,17 @@ public class GUI2 extends Application {
 //    private Process pythonProcess;
     private Long gnomeTerminalPid;
 
-    private Long startGnomeTerminalAndGetPid(String command) {
+    private Long startGnomeTerminalAndGetPid(Stage stage, String command) {
         try {
             // Start the gnome-terminal
             ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
             processBuilder.start();
-
+            try {
+                Thread.sleep(500);
+            
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }           
             // Use 'ps' to get the PID of the most recent gnome-terminal process
             Process psProcess = new ProcessBuilder("bash", "-c", "ps -eo pid,comm | grep gnome-terminal | tail -1 | awk '{print $1}'").start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(psProcess.getInputStream()));
@@ -416,7 +549,7 @@ public class GUI2 extends Application {
     }
     private void KillGnomeTerminal(long pid) {
         try {
-            String Killcommand = "kill -9 " + pid;
+            String Killcommand = "sudo kill -9 " + pid;
             ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", Killcommand);
             processBuilder.start();
             System.out.println("killed gnome-terminal with PID " + pid);
@@ -454,4 +587,5 @@ public class GUI2 extends Application {
         launch(args);
     }
 }
+
 
