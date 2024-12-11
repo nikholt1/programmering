@@ -1,8 +1,9 @@
 import sys
 import time
 import subprocess
-import select
 import datetime
+import select
+import scapy
 from scapy.all import *
 import csv
 #import fourletterphat as flp
@@ -27,8 +28,9 @@ print("\n\n\n   PLLY Product")
 
 
 detected_macs = []
-current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 filename  = f"MacLog_{current_time}.csv"
+filename2  = f"MacLog.csv"
 def main():
     try:
         load()
@@ -62,7 +64,7 @@ def set_monitor_mode_up():
         print(f"[{red}FAILED{reset}]Setting monitor mode failed")
     
     try:
-        result = subprocess.Popen("sudo", "airmon-ng", "start", "wlan1", stdout=subprocess.PIPE)
+        result = subprocess.Popen(["sudo", "airmon-ng", "start", "wlan1"], stdout=subprocess.PIPE)
         for l in result.stdout:
             if "already" in l.decode():
                 print(f"[{green}OK{reset}]INTERNET ALREADY IN MONITOR MODE AIRMON CHECKER")
@@ -90,6 +92,10 @@ def handle_packet(pkt):
                 csv_writer = csv.writer(file)
                 csv_writer.writerow([current_time, mac_address])
             print(f"[{green}LOG{reset}] MAC ADDRESS ADDED TO LIST FOR PARSE TO LOG")
+            with open(filename2, mode="a", newline="", encoding="utf-8") as file:
+                csv_writer = csv.writer(file)
+                csv_writer.writerow([current_time, mac_address])
+            print(f"[{green}LOG{reset}] MAC ADDRESS ADDED TO LIST FOR PARSE TO LOG")            
 
 def load():
     loading_states = ['|', '/', '-', '\\']
@@ -104,3 +110,5 @@ def load():
             time.sleep(0.2)
 if __name__ == "__main__":
     main()
+
+    
