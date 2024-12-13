@@ -1,4 +1,5 @@
 
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -423,6 +424,7 @@ public class GUI2 extends Application {
 
 
         root.getChildren().add(contentBox);
+        
         root.setStyle("-fx-background-color: #808080;");
         
         root.setOnKeyPressed(event -> {
@@ -460,7 +462,7 @@ public class GUI2 extends Application {
             } 
         
         }); 
-
+        root.getChildren().add(selectedLabel);
         // Set actions for the new buttons
         button1.setOnAction(event -> {
             String selectedItem = selectedItemProperty.get();
@@ -628,4 +630,3 @@ public class GUI2 extends Application {
         launch(args);
     }
 }
-
