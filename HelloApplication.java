@@ -1,5 +1,3 @@
-
-
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -27,6 +25,9 @@ import javafx.scene.control.ListView;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleStringProperty;
 
+import java.io.FileWriter;
+
+
 import java.io.*;
 import java.util.Timer;
 
@@ -43,11 +44,11 @@ import javafx.application.Platform;
 
 
 public class GUI2 extends Application {
-        
-    private Stage primaryStage;     
+
+    private Stage primaryStage;
     @Override
     public void start(Stage stage) {
-        this.primaryStage = stage;    
+        this.primaryStage = stage;
         // set stage always on top, to overlap gnome terminals in methods
         stage.setAlwaysOnTop(true);
         stage.requestFocus();
@@ -111,9 +112,9 @@ public class GUI2 extends Application {
                     break;
                 default:
                     break;
-            
+
             }
-        });        
+        });
 
         // Set the actions for the buttons
         button1.setOnAction(event -> changeSceneTrainer(stage, root, new Text("SELECTED")));
@@ -152,8 +153,8 @@ public class GUI2 extends Application {
         root.setAlignment(Pos.BOTTOM_CENTER);
         root.setPrefHeight(800);
         root.setStyle("-fx-background-color: #808080;");
-        
-        
+
+
         root.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case DIGIT1:
@@ -167,10 +168,10 @@ public class GUI2 extends Application {
                     break;
                 default:
                     break;
-            
+
             }
-        });        
-        
+        });
+
 
         // Set actions for the new buttons
         button1.setOnAction(event -> changeSceneTRAIN(stage, root, new Text("TRAINING")));  // Keeping the scene the same
@@ -182,8 +183,8 @@ public class GUI2 extends Application {
     private void changeSceneMACLOG(Stage stage, VBox root, Text newContent) {
         stage.setAlwaysOnTop(true);
         stage.requestFocus();
-        
-        
+
+
         // Clear the existing content
         root.getChildren().clear();
 
@@ -250,7 +251,7 @@ public class GUI2 extends Application {
                     break;
                 default:
                     break;
-            
+
             }
         });
 
@@ -262,8 +263,8 @@ public class GUI2 extends Application {
             String command = "gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYMacAndLog.py &";
             gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
             System.out.println("Terminal started");
-            
-            
+
+
         });  // Keeping the scene the same
         button2.setOnAction(event -> {
             if (gnomeTerminalPid != null) {
@@ -279,13 +280,13 @@ public class GUI2 extends Application {
 
         // Go back to the main scene
     }
-    
+
     private void changeScenePPS(Stage stage, VBox root, Text newContent) {
-        
-        
+
+
         stage.setAlwaysOnTop(true);
         stage.requestFocus();
-        
+
         // Clear the existing content
         root.getChildren().clear();
 
@@ -314,7 +315,7 @@ public class GUI2 extends Application {
 
         ListView<String> listView = new ListView<>();
         listView.setPrefHeight(400);
-        String filePath = "/home/User1/Desktop/DOBBYprgrm/MacLog.csv";
+        String filePath = "C:\\Users\\Niklas Holt Läu\\Documents\\GUIFX\\src\\MacAndLog.csv";
 
         // Initial population of ListView
         List<String> csvData = readCSV(filePath);
@@ -354,14 +355,14 @@ public class GUI2 extends Application {
                     break;
                 default:
                     break;
-            
+
             }
         });
 
         // Set actions for the buttons
         button1.setOnAction(event -> {
 
-            
+
             String command = "gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYPerPacketsSecond.py &";
             gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
             System.out.println("Terminal started");
@@ -412,7 +413,7 @@ public class GUI2 extends Application {
         //Creating ListVew to display CSV
         ListView<String> listView = new ListView<>();
         listView.setPrefHeight(400);
-        String filePath = "/home/User1/Desktop/DOBBYprgrm/MacLog.csv";
+        String filePath = "C:\\Users\\Niklas Holt Läu\\Documents\\GUIFX\\src\\MacAndLog.csv";
         List<String> csvData = readCSV(filePath);
         System.out.println(csvData);
         ObservableList<String> items = FXCollections.observableArrayList(csvData);
@@ -421,12 +422,38 @@ public class GUI2 extends Application {
         // Add the ListView and buttons to the root layout
         VBox contentBox = new VBox(10, listView, buttonBox);
         contentBox.setAlignment(Pos.CENTER);
+        listView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if(newSelection != null) {
+
+                String[] parts = newSelection.split(",", 2);
+                String processedItem = parts.length > 1 ? parts[1].trim() : "";
+
+                selectedItemProperty.set(processedItem);
+                selectedLabel.setText("Selected: " + processedItem);
 
 
+                String filePathWrite = "C:\\Users\\Niklas Holt Läu\\Documents\\GUIFX\\src\\TRACK.csv";
+                CSVWriter(filePathWrite, processedItem);
+
+
+
+
+            } else {
+                selectedItemProperty.set(null);
+                selectedLabel.setText("Selected: None");
+
+            }
+
+        });
+
+        //write to csv file
+
+
+        root.getChildren().add(selectedLabel);
         root.getChildren().add(contentBox);
-        
+
         root.setStyle("-fx-background-color: #808080;");
-        
+
         root.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case DIGIT1:
@@ -440,44 +467,29 @@ public class GUI2 extends Application {
                     break;
                 default:
                     break;
-            
-            }
-        });        
-        
 
-        
-        listView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if(newSelection != null) {
-                
-                String[] parts = newSelection.split(",", 2);
-                String processedItem = parts.length > 1 ? parts[1].trim() : "";
-                
-                selectedItemProperty.set(processedItem);
-                selectedLabel.setText("Selected: " + processedItem);
-                
-            } else {
-                selectedItemProperty.set(null);
-                selectedLabel.setText("Selected: None");
-            
-            } 
-        
-        }); 
-        root.getChildren().add(selectedLabel);
+            }
+        });
+
+
+
+
+
         // Set actions for the new buttons
         button1.setOnAction(event -> {
             String selectedItem = selectedItemProperty.get();
             if (selectedItem != null && !selectedItem.isEmpty()) {
-                System.out.println("Selected Item: " + selectedItem);  
+                System.out.println("Selected Item: " + selectedItem);
                 String command = "echo hello";
                 gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
                 System.out.println("Terminal started");
                 primaryStage.requestFocus();
-                System.out.println("PPS requested focus");                                 
-            
-            
-            }    
-        
-        
+                System.out.println("PPS requested focus");
+
+
+            }
+
+
         });  // Keeping the scene the same
         button2.setOnAction(event -> changeSceneTRACK(stage, root, newContent));
         button3.setOnAction(event -> changeSceneTrainer(stage, root, new Text("BACK")));
@@ -531,10 +543,10 @@ public class GUI2 extends Application {
                     break;
                 default:
                     break;
-            
+
             }
         });
-        
+
 
         // Set actions for the new buttons
         button1.setOnAction(event -> changeSceneTRAIN(stage, root, newContent));  // Keeping the scene the same
@@ -543,6 +555,17 @@ public class GUI2 extends Application {
         // Go back to the main scene
     }
 
+    private void CSVWriter(String filePathWrite, String processedItem) {
+        try (FileWriter writer = new FileWriter(filePathWrite)) {
+            writer.write(processedItem);
+            System.out.println("Data written to " + filePathWrite);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("error writing to file");
+        }
+
+
+    }
 
     private List<String> readCSV(String filepath) {
         List<String> data = new ArrayList<>();
@@ -558,7 +581,7 @@ public class GUI2 extends Application {
         return data;
     }
 
-//    private Process pythonProcess;
+    //    private Process pythonProcess;
     private Long gnomeTerminalPid;
 
     private Long startGnomeTerminalAndGetPid(Stage stage, String command) {
@@ -568,10 +591,10 @@ public class GUI2 extends Application {
             processBuilder.start();
             try {
                 Thread.sleep(500);
-            
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }           
+            }
             // Use 'ps' to get the PID of the most recent gnome-terminal process
             Process psProcess = new ProcessBuilder("bash", "-c", "ps -eo pid,comm | grep gnome-terminal | tail -1 | awk '{print $1}'").start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(psProcess.getInputStream()));
