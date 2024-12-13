@@ -24,12 +24,13 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ListView;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleStringProperty;
-
+import java.io.InputStreamReader;
 import java.io.FileWriter;
-
-
+import javafx.application.Platform;
+import javafx.scene.control.TextArea;
 import java.io.*;
 import java.util.Timer;
+import java.util.Properties;
 
 import java.lang.Process;
 import java.lang.ProcessBuilder;
@@ -315,7 +316,7 @@ public class GUI2 extends Application {
 
         ListView<String> listView = new ListView<>();
         listView.setPrefHeight(400);
-        String filePath = "C:\\Users\\Niklas Holt Läu\\Documents\\GUIFX\\src\\MacAndLog.csv";
+        String filePath = "/home/User1/Desktop/DOBBYprgrm/MacLog.csv";
 
         // Initial population of ListView
         List<String> csvData = readCSV(filePath);
@@ -384,12 +385,17 @@ public class GUI2 extends Application {
         // Go back to the main scene
     }
 
-
-
+    private TextArea textarea;
+    private String processedItem = "";
     private void changeSceneTRACK(Stage stage, VBox root, Text newContent) {
         // Clear the existing content
         root.getChildren().clear();
+        
+        String configFilePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYconfig.conf";
+        
+        String interfaceName = readConfigFile(configFilePath);
 
+        
         final StringProperty selectedItemProperty = new SimpleStringProperty();
         Label selectedLabel = new Label("Selected: None");
         Button button1 = new Button("START");
@@ -413,26 +419,36 @@ public class GUI2 extends Application {
         //Creating ListVew to display CSV
         ListView<String> listView = new ListView<>();
         listView.setPrefHeight(400);
-        String filePath = "C:\\Users\\Niklas Holt Läu\\Documents\\GUIFX\\src\\MacAndLog.csv";
+        String filePath = "/home/User1/Desktop/DOBBYprgrm/MacLog.csv";
         List<String> csvData = readCSV(filePath);
         System.out.println(csvData);
         ObservableList<String> items = FXCollections.observableArrayList(csvData);
         listView.setItems(items);
+        
+        // commad output display
+        TextArea textArea = new TextArea();
+        textarea.setEditable(false); 
+        textarea.setPrefHeight(200);
+        textarea.setStyle("-fx-font-size: 20px; -fx-background-color: #f0f0f0;");
+        
+        
+        
 
         // Add the ListView and buttons to the root layout
         VBox contentBox = new VBox(10, listView, buttonBox);
         contentBox.setAlignment(Pos.CENTER);
+        
         listView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if(newSelection != null) {
 
                 String[] parts = newSelection.split(",", 2);
-                String processedItem = parts.length > 1 ? parts[1].trim() : "";
+                processedItem = parts.length > 1 ? parts[1].trim() : "";
 
                 selectedItemProperty.set(processedItem);
                 selectedLabel.setText("Selected: " + processedItem);
 
 
-                String filePathWrite = "C:\\Users\\Niklas Holt Läu\\Documents\\GUIFX\\src\\TRACK.csv";
+                String filePathWrite = "/home/User1/Desktop/DOBBYprgrm/TRACK.csv";
                 CSVWriter(filePathWrite, processedItem);
 
 
@@ -445,6 +461,8 @@ public class GUI2 extends Application {
             }
 
         });
+        
+        
 
         //write to csv file
 
@@ -473,16 +491,20 @@ public class GUI2 extends Application {
 
 
 
-
+        if (interfaceName == null || interfaceName.isEmpty()) {
+            System.out.println("interface name not found in config file");
+            return;
+        }
+        
 
         // Set actions for the new buttons
         button1.setOnAction(event -> {
             String selectedItem = selectedItemProperty.get();
             if (selectedItem != null && !selectedItem.isEmpty()) {
                 System.out.println("Selected Item: " + selectedItem);
-                String command = "echo hello";
+                String command = "gnome-terminal -- sudo tcpdump -i " + interfaceName + " ether host " + processedItem;
                 gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
-                System.out.println("Terminal started");
+                System.out.println("Terminal started with interface " + interfaceName + " Tracking Mac: " + processedItem);
                 primaryStage.requestFocus();
                 System.out.println("PPS requested focus");
 
@@ -491,7 +513,12 @@ public class GUI2 extends Application {
 
 
         });  // Keeping the scene the same
-        button2.setOnAction(event -> changeSceneTRACK(stage, root, newContent));
+        button2.setOnAction(event -> {
+            if (gnomeTerminalPid != null) {
+                KillGnomeTerminal(gnomeTerminalPid);
+                gnomeTerminalPid = null;
+            }
+        });
         button3.setOnAction(event -> changeSceneTrainer(stage, root, new Text("BACK")));
         // Go back to the main scene
     }
@@ -635,7 +662,52 @@ public class GUI2 extends Application {
 //            return null;
 //        }
 //    }
-
+    
+    private String interfaceName;
+    private String trainerName;
+    
+    public String readConfigFile(String configFilePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(configFilePath))) {
+            String line;
+            boolean inTrainerSection = false;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) {
+                    continue;
+                }
+                if (line.equals("[trainer]")) {
+                    inTrainerSection = true;        
+                }
+                
+                if(inTrainerSection && line.startsWith("interface")) {
+                    String [] parts = line.split("=", 2);
+                    if (parts.length > 1) {
+                        interfaceName = parts[1].trim();
+                        System.out.println("Found interface: " + interfaceName);
+                    }
+                    break;
+                
+                }
+                
+                
+            
+            }
+            if (interfaceName == null) {
+                System.out.println("No interface found in [trainer] section");
+            
+            
+            
+            }      
+        } catch (IOException e) {
+                e.printStackTrace();
+        }
+        
+        return interfaceName;
+    }
+    
+    
+    
+    
     private void runCommand(String commandKill) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(commandKill.split(" "));
@@ -653,3 +725,4 @@ public class GUI2 extends Application {
         launch(args);
     }
 }
+
