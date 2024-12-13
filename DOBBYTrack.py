@@ -31,10 +31,10 @@ def main():
         target_mac = file.readline().strip()
 
     print("[{green}OK{reset}] SEARCHING FOR MAC:", target_mac, " WITH INTERFACE: " + interface)
+    load()
+    sniffer(interface, target_mac)
 
-    sniffer()
-
-def sniffer(packet, interface, target_mac):
+def sniffer(interface, target_mac):
     command = ["sudo", "tcpdump", "-i", interface, "ether", "host", target_mac]
     wifi = subprocess.Popen(command, stdout=subprocess.PIPE)
     try:
@@ -49,8 +49,11 @@ def sniffer(packet, interface, target_mac):
             packet_count += 1
             elapsed_time = time.time() - start_time
             if elapsed_time >= interval:
-                expected_packet = 10
-                print(f"[{green}OK{reset}] PACKETS: {packet_count} PER SECOND")
+                expected_packets = 10
+                percentage = (packet_count / expected_packets) * 100
+                print(f"[{green}OK{reset}]packets: {packet_count} per second")
+                #flp.print_number_str(packet_count)
+                #flp.show()
                 packet_count = 0
                 start_time = time.time()
     except KeyboardInterrupt:
@@ -58,6 +61,19 @@ def sniffer(packet, interface, target_mac):
     finally:
         wifi.terminate()
         wifi.wait()
+
+def load():
+    loading_states = ['|', '/', '-', '\\']
+    for _ in range(5):
+        for state in loading_states:
+            state = state * 4
+            sys.stdout.write(f'\rLoading {state}')
+            sys.stdout.flush()
+            #flp.clear()
+            #flp.print_str(state)
+            #flp.show()
+            time.sleep(0.2)
+
 
 if __name__ == "__main__":
     main()
