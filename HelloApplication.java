@@ -1,3 +1,4 @@
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -385,19 +386,25 @@ public class GUI2 extends Application {
         // Go back to the main scene
     }
 
-    private TextArea textarea;
     private String processedItem = "";
     private void changeSceneTRACK(Stage stage, VBox root, Text newContent) {
         // Clear the existing content
         root.getChildren().clear();
         
         String configFilePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYconfig.conf";
-        
         String interfaceName = readConfigFile(configFilePath);
 
         
+        
         final StringProperty selectedItemProperty = new SimpleStringProperty();
         Label selectedLabel = new Label("Selected: None");
+        
+        TextArea terminalOutput = new TextArea();
+        terminalOutput.setEditable(false);
+        terminalOutput.setPrefHeight(0);
+        terminalOutput.setStyle("-fx-font-size: 14px;");
+        terminalOutput.setWrapText(true);
+        
         Button button1 = new Button("START");
         Button button2 = new Button("STOP");
         Button button3 = new Button("BACK");
@@ -424,20 +431,6 @@ public class GUI2 extends Application {
         System.out.println(csvData);
         ObservableList<String> items = FXCollections.observableArrayList(csvData);
         listView.setItems(items);
-        
-        // commad output display
-        TextArea textArea = new TextArea();
-        textarea.setEditable(false); 
-        textarea.setPrefHeight(200);
-        textarea.setStyle("-fx-font-size: 20px; -fx-background-color: #f0f0f0;");
-        
-        
-        
-
-        // Add the ListView and buttons to the root layout
-        VBox contentBox = new VBox(10, listView, buttonBox);
-        contentBox.setAlignment(Pos.CENTER);
-        
         listView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if(newSelection != null) {
 
@@ -448,8 +441,8 @@ public class GUI2 extends Application {
                 selectedLabel.setText("Selected: " + processedItem);
 
 
-                String filePathWrite = "/home/User1/Desktop/DOBBYprgrm/TRACK.csv";
-                CSVWriter(filePathWrite, processedItem);
+                //String filePathWrite = "/home/User1/Desktop/DOBBYprgrm/TRACK.csv";
+                //CSVWriter(filePathWrite, processedItem);
 
 
 
@@ -462,15 +455,27 @@ public class GUI2 extends Application {
 
         });
         
+        // Add the ListView and buttons to the root layout
+        VBox contentBox = new VBox(10, listView, buttonBox);
+        contentBox.setAlignment(Pos.CENTER);
+        
+        root.getChildren().addAll(terminalOutput, listView, selectedLabel, buttonBox);
+        root.setStyle("-fx-background-color: #808080;");
+        
+        terminalOutput.appendText("Select target mac and press start");
+        
+        terminalOutput.setPrefHeight(stage.getHeight() * 0.2); 
+
+        
+
         
 
         //write to csv file
 
 
-        root.getChildren().add(selectedLabel);
-        root.getChildren().add(contentBox);
 
-        root.setStyle("-fx-background-color: #808080;");
+
+        
 
         root.setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -491,10 +496,7 @@ public class GUI2 extends Application {
 
 
 
-        if (interfaceName == null || interfaceName.isEmpty()) {
-            System.out.println("interface name not found in config file");
-            return;
-        }
+
         
 
         // Set actions for the new buttons
@@ -507,6 +509,7 @@ public class GUI2 extends Application {
                 System.out.println("Terminal started with interface " + interfaceName + " Tracking Mac: " + processedItem);
                 primaryStage.requestFocus();
                 System.out.println("PPS requested focus");
+                captureTerminalOutput(command, terminalOutput);
 
 
             }
@@ -706,7 +709,27 @@ public class GUI2 extends Application {
     }
     
     
+    private void captureTerminalOutput(String command, TextArea terminalOutput) {
     
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+            
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                terminalOutput.appendText(line + "\n");
+            }
+        
+        
+        } catch (Exception e) {
+            terminalOutput.appendText("Error: " + e.getMessage());
+        
+        }
+    
+    
+    }
     
     private void runCommand(String commandKill) {
         try {
@@ -725,4 +748,3 @@ public class GUI2 extends Application {
         launch(args);
     }
 }
-
