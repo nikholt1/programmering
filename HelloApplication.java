@@ -317,7 +317,11 @@ public class GUI2 extends Application {
         String configFilePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYconfig.conf";
         String interfaceName = readConfigFile(configFilePath);
         
-        
+        TextArea terminalOutputtwo = new TextArea();
+        terminalOutputtwo.setEditable(false);
+        terminalOutputtwo.setPrefHeight(3);
+        terminalOutputtwo.setStyle("-fx-font-size: 14px;");
+        terminalOutputtwo.setWrapText(true);
         
         TextArea terminalOutput = new TextArea();
         terminalOutput.setEditable(false);
@@ -353,8 +357,13 @@ public class GUI2 extends Application {
         VBox contentBox = new VBox(10, buttonBox);
         contentBox.setAlignment(Pos.CENTER);
         
-        root.getChildren().addAll(terminalOutput, buttonBox);
+        root.getChildren().addAll(terminalOutputtwo,terminalOutput, buttonBox);
         root.setStyle("-fx-background-color: #808080;");
+        
+
+        terminalOutputtwo.setText("Not Running");
+        terminalOutputtwo.setStyle("-fx-control-inner-background: darkred; -fx-text-fill: white;");
+        
         
         terminalOutput.appendText("Press start to start scan");
         
@@ -385,12 +394,13 @@ public class GUI2 extends Application {
             String command = "sudo tcpdump -i " + interfaceName;
                 //gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
                 //System.out.println("Terminal started with interface " + interfaceName + " Tracking Mac: " + processedItem);
-                
+            terminalOutputtwo.setText("Running");
+            terminalOutputtwo.setStyle("-fx-control-inner-background: green; -fx-text-fill: white;");
             startCommand(command, terminalOutput);
                 
             primaryStage.requestFocus();
             System.out.println("PPS requested focus");
-            captureTerminalOutput(gnomeTerminalPid, terminalOutput);
+            
 
             //String command = "gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYPerPacketsSecond.py &";
             //gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
@@ -401,6 +411,10 @@ public class GUI2 extends Application {
         });  // Keeping the scene the same
         button2.setOnAction(event -> {
             stopCommand(terminalOutput);
+
+            terminalOutputtwo.setText("Not Running");
+            terminalOutputtwo.setStyle("-fx-control-inner-background: darkred; -fx-text-fill: white;");
+                       
         });
         button3.setOnAction(event -> {
             initializeMainScene(stage, root, new Text("MAIN"));
@@ -421,6 +435,14 @@ public class GUI2 extends Application {
         
         final StringProperty selectedItemProperty = new SimpleStringProperty();
         Label selectedLabel = new Label("Selected: None");
+        selectedLabel.setStyle("-fx-text-fill: white;");
+        
+        TextArea terminalOutputtwo = new TextArea();
+        terminalOutputtwo.setEditable(false);
+        terminalOutputtwo.setPrefHeight(3);
+        terminalOutputtwo.setStyle("-fx-font-size: 14px;");
+        terminalOutputtwo.setWrapText(true);
+        
         
         TextArea terminalOutput = new TextArea();
         terminalOutput.setEditable(false);
@@ -482,8 +504,11 @@ public class GUI2 extends Application {
         VBox contentBox = new VBox(10, listView, buttonBox);
         contentBox.setAlignment(Pos.CENTER);
         
-        root.getChildren().addAll(terminalOutput, listView, selectedLabel, buttonBox);
+        root.getChildren().addAll(terminalOutputtwo, terminalOutput, listView, selectedLabel, buttonBox);
         root.setStyle("-fx-background-color: #808080;");
+
+        terminalOutputtwo.setText("Not Running");
+        terminalOutputtwo.setStyle("-fx-control-inner-background: darkred; -fx-text-fill: white;");
         
         terminalOutput.appendText("Select target mac and press start");
         
@@ -530,7 +555,8 @@ public class GUI2 extends Application {
                 String command = "sudo tcpdump -i " + interfaceName + " ether host " + processedItem;
                 //gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
                 //System.out.println("Terminal started with interface " + interfaceName + " Tracking Mac: " + processedItem);
-                
+                terminalOutputtwo.setText("Running");
+                terminalOutputtwo.setStyle("-fx-control-inner-background: green; -fx-text-fill: white;");
                 startCommand(command, terminalOutput);
                 
                 primaryStage.requestFocus();
@@ -548,6 +574,8 @@ public class GUI2 extends Application {
             //    gnomeTerminalPid = null;
             //}
             stopCommand(terminalOutput);
+            terminalOutputtwo.setText("Not running");
+            terminalOutputtwo.setStyle("-fx-control-inner-background: darkred; -fx-text-fill: white;");
             
         });
         button3.setOnAction(event -> changeSceneTrainer(stage, root, new Text("BACK")));
@@ -797,6 +825,7 @@ public class GUI2 extends Application {
                     ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", command);
                     processBuilder.redirectErrorStream(true);
                     commandProcess = processBuilder.start();
+
                     
                     BufferedReader reader = new BufferedReader(new InputStreamReader(commandProcess.getInputStream())); 
                     String line;
