@@ -1,41 +1,5 @@
-    private Process commandProcess; 
-    private void startCommand(String command, TextArea terminalOutput) {
-        new Thread(() -> {
-            try {    
-                    ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", command);
-                    processBuilder.redirectErrorStream(true);
-                    Process commandProcess = processBuilder.start();
-                    
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(commandProcess.getInputStream())); 
-                    String line;
-                    
-                    while ((line = reader.readLine()) != null) {
-                        String finalLine = line;
-                        Platform.runLater(() -> terminalOutput.appendText(finalLine + "\n"));
-                    }
-                    
-            } catch (Exception e) {
-                Platform.runLater(() -> terminalOutput.appendText(" Error: " + e.getMessage() + "\n"));
-            
-            }
-        }).start();
-    
-    
-    }
-    
-    private void stopCommand(TextArea terminalOutput) {
-
-        if (commandProcess != null) {
-            commandProcess.destroy();
-            Platform.runLater(() -> terminalOutput.appendText("command Stopped \n"));
-
-        } else {
-            Platform.runLater(() -> terminalOutput.appendText("No command to stop \n"));
-        }    
-  
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-}
+    public static final String RESET = "\u001B[0m";       // Resets formatting
+    public static final String RED = "\u001B[31m";       // Red text
+    public static final String GREEN = "\u001B[32m";     // Green text
+    public static final String BLUE = "\u001B[34m";      // Blue text
+    public static final String YELLOW = "\u001B[33m"; 
