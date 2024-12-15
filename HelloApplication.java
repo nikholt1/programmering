@@ -189,6 +189,15 @@ public class GUI2 extends Application {
 
         // Clear the existing content
         root.getChildren().clear();
+        
+        
+        TextArea terminalOutput = new TextArea();
+        terminalOutput.setEditable(false);
+        terminalOutput.setPrefHeight(3);
+        terminalOutput.setStyle("-fx-font-size: 14px;");
+        terminalOutput.setWrapText(true);
+        
+
 
 
         Button button1 = new Button("START");
@@ -223,9 +232,13 @@ public class GUI2 extends Application {
         VBox contentBox = new VBox(10, listView, buttonBox);
         contentBox.setAlignment(Pos.CENTER);
 
-        root.getChildren().add(contentBox);
+        root.getChildren().addAll(terminalOutput, contentBox);
         root.setStyle("-fx-background-color: #808080;");
-
+        
+        if (gnomeTerminalPid == null) {
+                terminalOutput.setText("Not Running");
+                terminalOutput.setStyle("-fx-control-inner-background: darkred; -fx-text-fill: white;");
+        }
         Timer timer = new Timer(true); // Daemon thread
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -265,7 +278,11 @@ public class GUI2 extends Application {
             String command = "gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYMacAndLog.py &";
             gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
             System.out.println("Terminal started");
-
+            if (gnomeTerminalPid != null) {
+                System.out.println("[gnome-terminal] " + gnomeTerminalPid + "alive");
+                terminalOutput.setText("Running");
+                terminalOutput.setStyle("-fx-control-inner-background: green; -fx-text-fill: white;");
+            }
 
         });  // Keeping the scene the same
         button2.setOnAction(event -> {
@@ -273,6 +290,11 @@ public class GUI2 extends Application {
                 KillGnomeTerminal(gnomeTerminalPid);
                 gnomeTerminalPid = null;
             }
+            if (gnomeTerminalPid == null) {
+                terminalOutput.setText("Not Running");
+                terminalOutput.setStyle("-fx-control-inner-background: darkred; -fx-text-fill: white;");
+            }            
+            
         });
         button3.setOnAction(event -> {
             timer.cancel();
@@ -291,9 +313,17 @@ public class GUI2 extends Application {
 
         // Clear the existing content
         root.getChildren().clear();
-
-        // Add the new content
-        root.getChildren().add(newContent);
+        
+        String configFilePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYconfig.conf";
+        String interfaceName = readConfigFile(configFilePath);
+        
+        
+        
+        TextArea terminalOutput = new TextArea();
+        terminalOutput.setEditable(false);
+        terminalOutput.setPrefHeight(0);
+        terminalOutput.setStyle("-fx-font-size: 14px;");
+        terminalOutput.setWrapText(true);
 
         // Create new buttons for the PPS scene
         Button button1 = new Button("START");
@@ -315,33 +345,22 @@ public class GUI2 extends Application {
         button3.setMaxWidth(Double.MAX_VALUE);
 
 
-        ListView<String> listView = new ListView<>();
-        listView.setPrefHeight(400);
-        String filePath = "/home/User1/Desktop/DOBBYprgrm/MacLog.csv";
 
-        // Initial population of ListView
-        List<String> csvData = readCSV(filePath);
-        ObservableList<String> items = FXCollections.observableArrayList(csvData);
-        listView.setItems(items);
+
 
 
         // Add the buttons to the root
-        root.getChildren().add(buttonBox);
-        root.setAlignment(Pos.BOTTOM_CENTER);
-        root.setPrefHeight(800);
+        VBox contentBox = new VBox(10, buttonBox);
+        contentBox.setAlignment(Pos.CENTER);
+        
+        root.getChildren().addAll(terminalOutput, buttonBox);
         root.setStyle("-fx-background-color: #808080;");
+        
+        terminalOutput.appendText("Press start to start scan");
+        
+        terminalOutput.setPrefHeight(stage.getHeight() * 0.2); 
 
-        Timer timer = new Timer(true); // Daemon thread
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    List<String> updatedData = readCSV(filePath);
-                    listView.setItems(FXCollections.observableArrayList(updatedData)); // Refresh the ListView
-                    System.out.println("Data refreshed: " + updatedData); // Debug log
-                });
-            }
-        }, 0, 1000);
+
 
 
         root.setOnKeyPressed(event -> {
@@ -363,23 +382,27 @@ public class GUI2 extends Application {
 
         // Set actions for the buttons
         button1.setOnAction(event -> {
-
-
-            String command = "gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYPerPacketsSecond.py &";
-            gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
-            System.out.println("Terminal started");
+            String command = "sudo tcpdump -i " + interfaceName;
+                //gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
+                //System.out.println("Terminal started with interface " + interfaceName + " Tracking Mac: " + processedItem);
+                
+            startCommand(command, terminalOutput);
+                
             primaryStage.requestFocus();
             System.out.println("PPS requested focus");
+            captureTerminalOutput(gnomeTerminalPid, terminalOutput);
+
+            //String command = "gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYPerPacketsSecond.py &";
+            //gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
+            //System.out.println("Terminal started");
+            //primaryStage.requestFocus();
+            //System.out.println("PPS requested focus");
 
         });  // Keeping the scene the same
         button2.setOnAction(event -> {
-            if (gnomeTerminalPid != null) {
-                KillGnomeTerminal(gnomeTerminalPid);
-                gnomeTerminalPid = null;
-            }
+            stopCommand(terminalOutput);
         });
         button3.setOnAction(event -> {
-            timer.cancel();
             initializeMainScene(stage, root, new Text("MAIN"));
 
         });
@@ -504,12 +527,15 @@ public class GUI2 extends Application {
             String selectedItem = selectedItemProperty.get();
             if (selectedItem != null && !selectedItem.isEmpty()) {
                 System.out.println("Selected Item: " + selectedItem);
-                String command = "gnome-terminal -- sudo tcpdump -i " + interfaceName + " ether host " + processedItem;
-                gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
-                System.out.println("Terminal started with interface " + interfaceName + " Tracking Mac: " + processedItem);
+                String command = "sudo tcpdump -i " + interfaceName + " ether host " + processedItem;
+                //gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
+                //System.out.println("Terminal started with interface " + interfaceName + " Tracking Mac: " + processedItem);
+                
+                startCommand(command, terminalOutput);
+                
                 primaryStage.requestFocus();
                 System.out.println("PPS requested focus");
-                captureTerminalOutput(command, terminalOutput);
+                captureTerminalOutput(gnomeTerminalPid, terminalOutput);
 
 
             }
@@ -517,10 +543,12 @@ public class GUI2 extends Application {
 
         });  // Keeping the scene the same
         button2.setOnAction(event -> {
-            if (gnomeTerminalPid != null) {
-                KillGnomeTerminal(gnomeTerminalPid);
-                gnomeTerminalPid = null;
-            }
+            //if (gnomeTerminalPid != null) {
+            //    KillGnomeTerminal(gnomeTerminalPid);
+            //    gnomeTerminalPid = null;
+            //}
+            stopCommand(terminalOutput);
+            
         });
         button3.setOnAction(event -> changeSceneTrainer(stage, root, new Text("BACK")));
         // Go back to the main scene
@@ -709,23 +737,42 @@ public class GUI2 extends Application {
     }
     
     
-    private void captureTerminalOutput(String command, TextArea terminalOutput) {
+    private void captureTerminalOutput(long gnomeTerminalPid, TextArea terminalOutput) {
     
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder(command);
+            String pidStr = String.valueOf(gnomeTerminalPid);
+            
+            Process findTtyProcess = new ProcessBuilder("bash", "-c", "sudo", "ps", "--ppid", pidStr, "-o", "tty=", "|", "grep", "-v", "'?'", "|", "head", "-n", "1").start();
+            System.out.println(findTtyProcess);
+            BufferedReader ttyReader = new BufferedReader(new InputStreamReader(findTtyProcess.getInputStream()));
+            String tty = ttyReader.readLine();
+            
+            if (tty == null || tty.trim().isEmpty()) {
+                Platform.runLater(() -> terminalOutput.appendText("ERROR coud not find valid tty for PID " + gnomeTerminalPid + "\n"));
+                Platform.runLater(() -> terminalOutput.appendText("TTY trimmed for debug: " + tty.trim()));
+            
+            }
+            
+            String ptyPath = "/dev/" + tty.trim();
+            String command = "cat " + ptyPath;
+            
+            
+            ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", command);
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
             
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                terminalOutput.appendText(line + "\n");
+                String finalLine = line;
+                Platform.runLater(() -> terminalOutput.appendText(finalLine + "\n"));
+
             }
         
         
         } catch (Exception e) {
-            terminalOutput.appendText("Error: " + e.getMessage());
-        
+            Platform.runLater(() -> terminalOutput.appendText("Error for debug: " + e.getMessage() + "\n"));
+
         }
     
     
@@ -743,8 +790,45 @@ public class GUI2 extends Application {
         }
 
     }
+    private Process commandProcess; 
+    private void startCommand(String command, TextArea terminalOutput) {
+        new Thread(() -> {
+            try {    
+                    ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", command);
+                    processBuilder.redirectErrorStream(true);
+                    commandProcess = processBuilder.start();
+                    
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(commandProcess.getInputStream())); 
+                    String line;
+                    
+                    while ((line = reader.readLine()) != null) {
+                        String finalLine = line;
+                        Platform.runLater(() -> terminalOutput.appendText(finalLine + "\n"));
+                    }
+                    
+            } catch (Exception e) {
+                Platform.runLater(() -> terminalOutput.appendText(" Error: " + e.getMessage() + "\n"));
+            
+            }
+        }).start();
+    
+    
+    }
+    
+    private void stopCommand(TextArea terminalOutput) {
+
+        if (commandProcess != null && commandProcess.isAlive()) {
+            commandProcess.destroy();
+            Platform.runLater(() -> terminalOutput.appendText("command Stopped \n"));
+            commandProcess = null;
+        } else {
+            Platform.runLater(() -> terminalOutput.appendText("No command to stop \n"));
+        }    
+  
+    }
 
     public static void main(String[] args) {
         launch(args);
     }
 }
+
