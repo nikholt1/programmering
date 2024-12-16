@@ -6,3 +6,12 @@ python3
 gnome:
 set windows to only on click to disable the gnome-terminal overlap on start and stop
 ## to set on click in installation setup bash file.
+
+
+
+spalsh
+
+https://www.youtube.com/watch?v=Y1NXYyBIs9A&t=111s
+
+omxplayer
+
