@@ -1,4 +1,5 @@
 
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -32,10 +33,11 @@ import javafx.scene.control.TextArea;
 import java.io.*;
 import java.util.Timer;
 import java.util.Properties;
-
+import javafx.scene.layout.Pane;
 import java.lang.Process;
 import java.lang.ProcessBuilder;
-
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
@@ -74,23 +76,28 @@ public class GUI2 extends Application {
         Button button1 = new Button("TRAINER");
         Button button2 = new Button("MAC LOGGING");
         Button button3 = new Button("PACKET PER SECOND");
+        Button button4 = new Button("SETTINGS");
         HBox buttonBox = new HBox();
-        buttonBox.getChildren().addAll(button1, button2, button3);
+        buttonBox.getChildren().addAll(button1, button2, button3, button4);
         button1.setMinHeight(300);
         button2.setMinHeight(300);
         button3.setMinHeight(300);
+        button4.setMinHeight(300);
 
         button1.setStyle("-fx-font-size: 30px;");
         button2.setStyle("-fx-font-size: 30px;");
         button3.setStyle("-fx-font-size: 30px;");
+        button4.setStyle("-fx-font-size: 30px;");
 
         // Make buttons grow and take available space
         HBox.setHgrow(button1, Priority.ALWAYS);
         HBox.setHgrow(button2, Priority.ALWAYS);
         HBox.setHgrow(button3, Priority.ALWAYS);
+        HBox.setHgrow(button4, Priority.ALWAYS);
         button1.setMaxWidth(Double.MAX_VALUE);
         button2.setMaxWidth(Double.MAX_VALUE);
         button3.setMaxWidth(Double.MAX_VALUE);
+        button4.setMaxWidth(Double.MAX_VALUE);        
 
         // Set the layout and alignment for the buttons
 
@@ -122,8 +129,117 @@ public class GUI2 extends Application {
         button1.setOnAction(event -> changeSceneTrainer(stage, root, new Text("SELECTED")));
         button2.setOnAction(event -> changeSceneMACLOG(stage, root, new Text("MACLOG")));
         button3.setOnAction(event -> changeScenePPS(stage, root, new Text("PACKET PER SECOND")));
+        button4.setOnAction(event -> changeSceneSettings(stage, root, new Text("SETTINGS")));
     }
 
+    private void changeSceneSettings(Stage stage, VBox root, Text newContent) {
+        root.getChildren().clear();
+
+        // Add the new content
+        root.getChildren().add(newContent);
+
+
+        // add splitpane
+        SplitPane splitPane = new SplitPane();
+        splitPane.setDividerPositions(0.5);
+        
+        
+        String configFilePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYconfig.conf";        
+        String interfaceName = readConfigFile(configFilePath);
+
+        // Create new buttons for the trainer scene
+        Button button1 = new Button("CONFIG");
+        Button button2 = new Button("DELETE DATABASE");
+        Button button3 = new Button("WRITE TO USB");
+        Button button4 = new Button("BACK");
+        VBox buttonBox = new VBox();
+        buttonBox.getChildren().addAll(button1, button2, button3, button4);
+
+
+        // Add the buttons to the root
+        
+        Pane contentPane = new Pane();
+        contentPane.setStyle("-fx-background-color; #FFFFFF;");
+        
+        splitPane.getItems().addAll(buttonBox, contentPane);
+        buttonBox.setMinWidth(100);
+        buttonBox.setMaxWidth(200);
+        
+        VBox.setVgrow(splitPane, Priority.ALWAYS);
+        root.getChildren().add(splitPane);
+        
+
+        root.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DIGIT1:
+                    button1.fire();
+                    break;
+                case DIGIT2:
+                    button2.fire();
+                    break;
+                case DIGIT3:
+                    button3.fire();
+                    break;
+                default:
+                    break;
+
+            }
+        });
+
+
+        // Set actions for the new buttons
+        button1.setOnAction(event -> {
+            contentPane.getChildren().clear();
+            Text InterFaceName = new Text("DOBBYConfig.conf interface name:" + interfaceName);
+            TextArea newInter = new TextArea("Input new interface: ");
+            newInter.setPrefHeight(40);
+            newInter.setText(interfaceName);
+            Button writeButton = new Button("Write to Conf");
+            Text TargMacName = new Text("DOBBYConfig.conf interface name:" + interfaceName);
+            TextArea newMac = new TextArea("Input new interface: ");
+            newMac.setPrefHeight(40);
+            newMac.setText(interfaceName);
+            Button writeButton2 = new Button("Write to Conf");            
+            VBox ConfBox = new VBox();
+            
+            ConfBox.getChildren().addAll(InterFaceName, newInter, writeButton, TargMacName, newMac, writeButton2);
+            
+            
+            
+            
+            contentPane.getChildren().addAll(ConfBox);
+
+        
+        
+        });  
+        button2.setOnAction(event -> {
+            contentPane.getChildren().clear();
+            Label dataBaseSession = new Label("SESSION DATABASES");
+            String directory = "/home/User1/Desktop/DOBBYprgrm/";
+            ListView<String> fileListView = new ListView<>();
+            listFilesInFolder(directory, fileListView);
+            VBox MacDataBase = new VBox();
+            MacDataBase.getChildren().addAll(dataBaseSession, fileListView);            
+            contentPane.getChildren().addAll(MacDataBase);
+ 
+
+        
+        });
+        button2.setOnAction(event -> {
+        
+        
+        
+        });
+        button4.setOnAction(event -> initializeMainScene(stage, root, new Text("BACK")));        
+        
+        
+        
+        }
+
+
+
+    
+    
     private void changeSceneTrainer(Stage stage, VBox root, Text newContent) {
         // Clear the existing content
         root.getChildren().clear();
@@ -764,7 +880,38 @@ public class GUI2 extends Application {
         return interfaceName;
     }
     
+    private void listFilesInFolder(String directory, ListView<String> fileListView) {
+        File folder = new File(directory);        
+        
+        if (folder.exists() && folder.isDirectory()) {
+            File[] files = folder.listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return !name.startsWith("MacAndLog");
+                }
+                
+        });
+                
+            fileListView.getItems().clear();
+            if (files != null && files.length > 0) {
+                for (File file : files) {
+                    fileListView.getItems().add(file.getName());
+                } 
+            } else {
+                fileListView.getItems().add("No files in Directory");
+                
+            } 
+            
+            
+        } else {
+            fileListView.getItems().add("ERROR: directory " + directory + " does not exist");
+            
+        }    
     
+    
+    
+    
+    
+    }
     private void captureTerminalOutput(long gnomeTerminalPid, TextArea terminalOutput) {
     
         try {
@@ -860,4 +1007,3 @@ public class GUI2 extends Application {
         launch(args);
     }
 }
-
