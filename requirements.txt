@@ -8,6 +8,9 @@ set windows to only on click to disable the gnome-terminal overlap on start and 
 ## to set on click in installation setup bash file.
 
 
+func chart:
+https://lucid.app/lucidchart/1ff6787f-8fb2-4eff-b555-9a07e8fb177f/edit?invitationId=inv_6c476502-171a-4b8e-939c-7f616ca6f02f&page=0_0#
+
 
 spalsh
 
