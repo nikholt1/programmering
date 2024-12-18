@@ -1,5 +1,3 @@
-
-
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,7 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-
+import java.io.*;
+import java.nio.file.*;
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -49,15 +48,25 @@ import javafx.application.Platform;
 
 public class GUI2 extends Application {
 
+
+    public static final String RESET = "\033[0m";
+    public static final String GREEN = "\033[32m";
+    public static final String PURPLE = "\033[35m";
+    public static final String ORANGE = "\033[33m";
+    public static final String BLUE = "\033[34m";
+    public static final String RED = "\033[31m";
+
     private Stage primaryStage;
     @Override
     public void start(Stage stage) {
         this.primaryStage = stage;
         // set stage always on top, to overlap gnome terminals in methods
         stage.setAlwaysOnTop(true);
+        System.out.println(BLUE + "[SYSTEM] stage always on top: true" + RESET);
         stage.requestFocus();
         // Initialize the VBox and other UI elements
         VBox root = new VBox();
+        System.out.println(BLUE + "[SYSTEM] initializing main scene" + RESET);
         initializeMainScene(stage, root, new Text("INIT"));
 
         // Set the Scene and show the Stage
@@ -65,6 +74,7 @@ public class GUI2 extends Application {
         stage.setScene(scene);
         stage.setTitle("DOBBY GUI");
         stage.setFullScreen(true);
+        System.out.println(BLUE + "[SYSTEM] stage set to full screen: true" + RESET);
 
         stage.show();
     }
@@ -144,8 +154,9 @@ public class GUI2 extends Application {
         splitPane.setDividerPositions(0.5);
         
         
-        String configFilePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYconfig.conf";        
-        String interfaceName = readConfigFile(configFilePath);
+        String configFilePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYconfig.conf";
+        System.out.println(ORANGE + "found file path: /home/User1/Desktop/DOBBYprgrm/DOBBYconfig.conf" + RESET); 
+
 
         // Create new buttons for the trainer scene
         Button button1 = new Button("CONFIG");
@@ -159,7 +170,7 @@ public class GUI2 extends Application {
         // Add the buttons to the root
         
         Pane contentPane = new Pane();
-        contentPane.setStyle("-fx-background-color; #FFFFFF;");
+        contentPane.setStyle("-fx-background-color: #FFFFFF;");
         
         splitPane.getItems().addAll(buttonBox, contentPane);
         buttonBox.setMinWidth(100);
@@ -190,21 +201,69 @@ public class GUI2 extends Application {
         // Set actions for the new buttons
         button1.setOnAction(event -> {
             contentPane.getChildren().clear();
-            Text InterFaceName = new Text("DOBBYConfig.conf interface name:" + interfaceName);
-            TextArea newInter = new TextArea("Input new interface: ");
+            String key = "interface";
+                 
+            String interfaceName = readConfigFile(configFilePath, key, update);
+            
+            Text InterFaceName = new Text("DOBBYConfig.conf interface: " + interfaceName);
+            TextArea newInter = new TextArea();
+            newInter.setPromptText("Input new Interface");
             newInter.setPrefHeight(40);
-            newInter.setText(interfaceName);
             Button writeButton = new Button("Write to Conf");
-            Text TargMacName = new Text("DOBBYConfig.conf interface name:" + interfaceName);
-            TextArea newMac = new TextArea("Input new interface: ");
+            
+            writeButton.setOnAction(buttonEvent -> {
+                String key2 = "interface";
+                newValue = newInter.getText().trim();
+                System.out.println(ORANGE + "[SYSTEM METHOD] newValue to parse to config file = " + newValue + RESET);
+                writeConfigFile(configFilePath, key2);                
+            
+            });
+            
+            key = "target_mac";     
+            String targetMacName = readConfigFile(configFilePath, key, update);            
+            
+            Text TargMacName = new Text("DOBBYConfig.conf target_mac: " + targetMacName);
+            TextArea newMac = new TextArea();
             newMac.setPrefHeight(40);
-            newMac.setText(interfaceName);
-            Button writeButton2 = new Button("Write to Conf");            
+            newMac.setPromptText("Input new target_mac");
+            Button writeButton2 = new Button("Write to Conf");   
+                     
+            writeButton2.setOnAction(buttonEvent -> {
+                String key2 = "target_mac";
+                newValue = newMac.getText().trim();
+                System.out.println(ORANGE + "[SYSTEM METHOD] newValue to parse to config file = " + newValue + RESET);
+                writeConfigFile(configFilePath, key2);                
+            
+            });
+            System.out.println(ORANGE + "[SYSTEM METHOD] newValue written to config file " + configFilePath + " successfully " + RESET);
+            
+            
+            key = "target_mac2";     
+            String targetMacName2 = readConfigFile(configFilePath, key, update);            
+            
+            Text TargMacName2 = new Text("DOBBYConfig.conf target_mac2: " + targetMacName2);
+            TextArea newMac2 = new TextArea();
+            newMac2.setPrefHeight(40);
+            newMac2.setPromptText("Input new target_mac");
+            Button writeButton3 = new Button("Write to Conf");   
+                     
+            writeButton3.setOnAction(buttonEvent -> {
+                String key2 = "target_mac2";
+                newValue = newMac2.getText().trim();
+                System.out.println(ORANGE + "[SYSTEM METHOD] newValue to parse to config file = " + newValue + RESET);
+                writeConfigFile(configFilePath, key2);                
+            
+            });
+            System.out.println(ORANGE + "[SYSTEM METHOD] newValue written to config file " + configFilePath + " successfully " + RESET);
+                        
+            
+            
+            
             VBox ConfBox = new VBox();
             
-            ConfBox.getChildren().addAll(InterFaceName, newInter, writeButton, TargMacName, newMac, writeButton2);
+            ConfBox.getChildren().addAll(InterFaceName, newInter, writeButton, TargMacName, newMac, writeButton2, TargMacName2, newMac2, writeButton3);
             
-            
+
             
             
             contentPane.getChildren().addAll(ConfBox);
@@ -212,22 +271,30 @@ public class GUI2 extends Application {
         
         
         });  
+
         button2.setOnAction(event -> {
+        
+            System.out.println("Button2 pressed");
             contentPane.getChildren().clear();
-            Label dataBaseSession = new Label("SESSION DATABASES");
-            String directory = "/home/User1/Desktop/DOBBYprgrm/";
+            Label dataBaseSession = new Label("Session DATABASES");
+            String directory = "/home/User1/Desktop/DOBBYprgrm/DOBBYData";
+            File folder = new File(directory);
+            if (!folder.exists()) {
+                System.out.print(ORANGE + "[SYSTEM METHOD] Directory does not exist: " + directory + RESET);
+            } else if (!folder.isDirectory()) {
+                System.out.println(ORANGE + "[SYSTEM METHOD] Path is not a directory: " + directory + RESET);
+            } else {
+                System.out.println(ORANGE + "[SYSTEM METHOD] Directory is valid" + RESET);
+            }
             ListView<String> fileListView = new ListView<>();
             listFilesInFolder(directory, fileListView);
+            Button deleteSessionFiles = new Button("Delete all session files");
+            Button deleteDataFiles = new Button("Delete all time Database");
             VBox MacDataBase = new VBox();
-            MacDataBase.getChildren().addAll(dataBaseSession, fileListView);            
+            
+            MacDataBase.getChildren().addAll(dataBaseSession, fileListView, deleteSessionFiles, deleteDataFiles);
+            
             contentPane.getChildren().addAll(MacDataBase);
- 
-
-        
-        });
-        button2.setOnAction(event -> {
-        
-        
         
         });
         button4.setOnAction(event -> initializeMainScene(stage, root, new Text("BACK")));        
@@ -337,7 +404,7 @@ public class GUI2 extends Application {
         //Creating ListVew to display CSV
         ListView<String> listView = new ListView<>();
         listView.setPrefHeight(400);
-        String filePath = "/home/User1/Desktop/DOBBYprgrm/MacLog.csv";
+        String filePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYData/DataBase.csv";
 
         // Initial population of ListView
         List<String> csvData = readCSV(filePath);
@@ -390,7 +457,7 @@ public class GUI2 extends Application {
         // Set actions for the new buttons
         button1.setOnAction(event -> {
             stage.requestFocus();
-            System.out.println("stage requested focus to overlay gnome-terminal");
+            System.out.println(ORANGE + "[SYSTEM METHOD] stage requested focus to overlay gnome-terminal" + RESET);
             String command = "gnome-terminal -- sudo python /home/User1/Desktop/DOBBYprgrm/DOBBYMacAndLog.py &";
             gnomeTerminalPid = startGnomeTerminalAndGetPid(stage, command);
             System.out.println("Terminal started");
@@ -431,7 +498,8 @@ public class GUI2 extends Application {
         root.getChildren().clear();
         
         String configFilePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYconfig.conf";
-        String interfaceName = readConfigFile(configFilePath);
+        String key = "interface";
+        String interfaceName = readConfigFile(configFilePath, key, update);
         
         TextArea terminalOutputtwo = new TextArea();
         terminalOutputtwo.setEditable(false);
@@ -545,7 +613,8 @@ public class GUI2 extends Application {
         root.getChildren().clear();
         
         String configFilePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYconfig.conf";
-        String interfaceName = readConfigFile(configFilePath);
+        String key = "interface"; 
+        String interfaceName = readConfigFile(configFilePath, key, update);
 
         
         
@@ -587,7 +656,7 @@ public class GUI2 extends Application {
         //Creating ListVew to display CSV
         ListView<String> listView = new ListView<>();
         listView.setPrefHeight(400);
-        String filePath = "/home/User1/Desktop/DOBBYprgrm/MacLog.csv";
+        String filePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYData/DataBase.csv";
         List<String> csvData = readCSV(filePath);
         System.out.println(csvData);
         ObservableList<String> items = FXCollections.observableArrayList(csvData);
@@ -760,10 +829,10 @@ public class GUI2 extends Application {
     private void CSVWriter(String filePathWrite, String processedItem) {
         try (FileWriter writer = new FileWriter(filePathWrite)) {
             writer.write(processedItem);
-            System.out.println("Data written to " + filePathWrite);
+            System.out.println(RED + "[SYSTEM WORKER METHOD] Data written to " + filePathWrite + RESET);
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("error writing to file");
+            System.out.println(RED + "[SYSTEM WORKER METHOD] ERROR writing to file" + RESET);
         }
 
 
@@ -777,9 +846,9 @@ public class GUI2 extends Application {
                 data.add(line);
             }
         } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
+            System.out.println(RED + "[SYSTEM WORKER METHOD] ERROR reading file: " + e.getMessage() + RESET);
         }
-        System.out.println("Data read from file: " + data); // Debugging
+        System.out.println(RED + "[SYSTEM WORKER METHOD] Data read from file: " + data + RESET); // Debugging
         return data;
     }
 
@@ -803,10 +872,10 @@ public class GUI2 extends Application {
 
             String pidString = reader.readLine();
             if (pidString != null && !pidString.isEmpty()) {
-                System.out.println("Started gnome-terminal with PID: " + pidString);
+                System.out.println(RED + "[SYSTEM WORKER METHOD] Started gnome-terminal with PID: " + pidString + RESET);
                 return Long.parseLong(pidString.trim()); // Return the PID as a Long
             } else {
-                System.out.println("Failed to retrieve gnome-terminal PID.");
+                System.out.println(RED + "[SYSTEM WORKER METHOD] ERROR Failed to retrieve gnome-terminal PID." + RESET);
                 return null; // No PID found, return null
             }
 
@@ -820,7 +889,7 @@ public class GUI2 extends Application {
             String Killcommand = "sudo kill -9 " + pid;
             ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", Killcommand);
             processBuilder.start();
-            System.out.println("killed gnome-terminal with PID " + pid);
+            System.out.println(RED + "[SYSTEM WORKER METHOD] killed gnome-terminal with PID " + pid + RESET);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -840,8 +909,10 @@ public class GUI2 extends Application {
     
     private String interfaceName;
     private String trainerName;
+    private boolean update = false;
+    private String newValue;
     
-    public String readConfigFile(String configFilePath) {
+    public String readConfigFile(String configFilePath, String key, boolean update) {
         try (BufferedReader reader = new BufferedReader(new FileReader(configFilePath))) {
             String line;
             boolean inTrainerSection = false;
@@ -854,11 +925,11 @@ public class GUI2 extends Application {
                     inTrainerSection = true;        
                 }
                 
-                if(inTrainerSection && line.startsWith("interface")) {
+                if(inTrainerSection && line.startsWith(key)) {
                     String [] parts = line.split("=", 2);
                     if (parts.length > 1) {
                         interfaceName = parts[1].trim();
-                        System.out.println("Found interface: " + interfaceName);
+                        System.out.println(RED + "[SYSTEM WORKER METHOD] Found interface: " + interfaceName + RESET);
                     }
                     break;
                 
@@ -868,7 +939,7 @@ public class GUI2 extends Application {
             
             }
             if (interfaceName == null) {
-                System.out.println("No interface found in [trainer] section");
+                System.out.println(RED + "[SYSTEM WORKER METHOD] No interface found in [trainer] section" + RESET);
             
             
             
@@ -879,6 +950,48 @@ public class GUI2 extends Application {
         
         return interfaceName;
     }
+    
+    
+    private void writeConfigFile(String configFilePath, String key2) {
+        try {
+            Path path = Paths.get(configFilePath);
+            if (Files.exists(path)) {
+                List<String> lines = Files.readAllLines(path);
+                boolean keyFound = false;
+                
+                for (int i = 0; i < lines.size(); i++) {
+                    String line = lines.get(i).trim();
+                    if (line.startsWith(key2)) {
+                        lines.set(i, key2 + " = " + newValue);
+                        keyFound = true;
+                        break;
+                    
+                    }
+                
+                }
+                if (keyFound) {
+                    Files.write(path, lines);
+                    System.out.println(RED + "[SYSTEM WORKER METHOD] Config file updated with key: " + key2 + " and new value: " + newValue + RESET);
+                    
+                
+                } else {
+                    System.out.println(RED + "[SYSTEM WORKER METHOD] ERROR " + key2 + " not found in config file under path " + configFilePath + RESET);
+                
+                }
+            
+            } else {
+                System.out.println(RED + "[SYSTEM WORKER METHOD] config file not found: " + configFilePath);
+            
+            }
+        
+        } catch (IOException e) {
+            System.out.println(RED + "[SYSTEM WORKER METHOD] ERROR: " + e.toString() + " in writeConfigFile method" + RESET);
+        
+        }
+    
+    
+    }
+    
     
     private void listFilesInFolder(String directory, ListView<String> fileListView) {
         File folder = new File(directory);        
@@ -912,6 +1025,10 @@ public class GUI2 extends Application {
     
     
     }
+    
+    
+    
+    
     private void captureTerminalOutput(long gnomeTerminalPid, TextArea terminalOutput) {
     
         try {
@@ -990,6 +1107,7 @@ public class GUI2 extends Application {
     
     
     }
+    
     
     private void stopCommand(TextArea terminalOutput) {
 
