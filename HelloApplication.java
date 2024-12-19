@@ -40,6 +40,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -81,7 +83,28 @@ public class GUI2 extends Application {
 
     private void initializeMainScene(Stage stage, VBox root, Text newContent) {
         root.getChildren().clear();
+        
+        Image logo = new Image("file:/home/User1/Desktop/DOBBYprgrm/Images/logo2.png");
+        ImageView logoView = new ImageView(logo);
+        logoView.setFitWidth(200);
 
+
+        String legal = "READ BEFORE USE"
+        + "lorem isum lorem more " 
+        + "lomen grger ger ger greg e" 
+        + "gpremgpemrgåemrgåmerogåmeroågm"
+        + "goremgoierognreognorengoneorgr" 
+        + "grmeogmermgermgoergoegnropginer";
+        Label scrollLegal = new Label(legal);
+        scrollLegal.setStyle("-fx-font-size: 10px;");
+        scrollLegal.setStyle("-fx-background-color: #808080;");
+        scrollLegal.setWrapText(true);
+        ScrollPane scrollpane = new ScrollPane(scrollLegal);
+        scrollpane.setFitToWidth(true); 
+        VBox logoBox = new VBox(logoView, scrollpane);
+        logoBox.setAlignment(Pos.TOP_LEFT);        
+        
+        
         // Create buttons for the main scene
         Button button1 = new Button("TRAINER");
         Button button2 = new Button("MAC LOGGING");
@@ -112,7 +135,7 @@ public class GUI2 extends Application {
         // Set the layout and alignment for the buttons
 
         root.getChildren().clear();
-        root.getChildren().add(buttonBox);
+        root.getChildren().addAll(logoBox, buttonBox);
         root.setAlignment(Pos.BOTTOM_CENTER);
         root.setPrefHeight(800);
         root.setStyle("-fx-background-color: #808080;");
@@ -254,14 +277,55 @@ public class GUI2 extends Application {
                 writeConfigFile(configFilePath, key2);                
             
             });
+            
+            System.out.println(ORANGE + "[SYSTEM METHOD] newValue written to config file " + configFilePath + " successfully " + RESET);
+            
+            
+            key = "trainer_mac1";     
+            String trainerMacName1 = readConfigFile(configFilePath, key, update);            
+            
+            Text trainMacName1 = new Text("DOBBYConfig.conf trainer_mac1: " + trainerMacName1);
+            TextArea newMac3 = new TextArea();
+            newMac3.setPrefHeight(40);
+            newMac3.setPromptText("Input new trainer_mac");
+            Button writeButton4 = new Button("Write to Conf");   
+                     
+            writeButton4.setOnAction(buttonEvent -> {
+                String key2 = "trainer_mac1";
+                newValue = newMac3.getText().trim();
+                System.out.println(ORANGE + "[SYSTEM METHOD] newValue to parse to config file = " + newValue + RESET);
+                writeConfigFile(configFilePath, key2);                
+            
+            });
+            System.out.println(ORANGE + "[SYSTEM METHOD] newValue written to config file " + configFilePath + " successfully " + RESET);
+            
+            
+            key = "trainer_mac2";     
+            String trainerMacName2 = readConfigFile(configFilePath, key, update);            
+            
+            Text trainMacName2 = new Text("DOBBYConfig.conf trainer_mac2: " + trainerMacName2);
+            TextArea newMac4 = new TextArea();
+            newMac4.setPrefHeight(40);
+            newMac4.setPromptText("Input new trainer_mac");
+            Button writeButton5 = new Button("Write to Conf");   
+                     
+            writeButton5.setOnAction(buttonEvent -> {
+                String key2 = "trainer_mac2";
+                newValue = newMac4.getText().trim();
+                System.out.println(ORANGE + "[SYSTEM METHOD] newValue to parse to config file = " + newValue + RESET);
+                writeConfigFile(configFilePath, key2);                
+            
+            });
             System.out.println(ORANGE + "[SYSTEM METHOD] newValue written to config file " + configFilePath + " successfully " + RESET);
                         
+                                    
+                                    
             
             
             
             VBox ConfBox = new VBox();
             
-            ConfBox.getChildren().addAll(InterFaceName, newInter, writeButton, TargMacName, newMac, writeButton2, TargMacName2, newMac2, writeButton3);
+            ConfBox.getChildren().addAll(InterFaceName, newInter, writeButton, TargMacName, newMac, writeButton2, TargMacName2, newMac2, writeButton3, trainMacName1, newMac3, writeButton4, trainMacName2, newMac4, writeButton5);
             
 
             
@@ -273,7 +337,9 @@ public class GUI2 extends Application {
         });  
 
         button2.setOnAction(event -> {
-        
+            TextArea terminalOutput = new TextArea();
+            terminalOutput.setPrefHeight(20);
+            terminalOutput.setStyle("-fx-text-fill: black;");
             System.out.println("Button2 pressed");
             contentPane.getChildren().clear();
             Label dataBaseSession = new Label("Session DATABASES");
@@ -288,23 +354,183 @@ public class GUI2 extends Application {
             }
             ListView<String> fileListView = new ListView<>();
             listFilesInFolder(directory, fileListView);
-            Button deleteSessionFiles = new Button("Delete all session files");
-            Button deleteDataFiles = new Button("Delete all time Database");
-            VBox MacDataBase = new VBox();
+            Button deleteDataFiles = new Button("Shred all time Database");
+            deleteDataFiles.setOnAction(buttonEvent -> {
+                String command = "sudo shred -u /home/User1/Desktop/DOBBYprgrm/DOBBYData/DataBase.csv";
+                startCommand(command, terminalOutput);
+                System.out.print(ORANGE + "[SYSTEM METHOD] Running shred command on file: DataBase.csv" + RESET);                
             
-            MacDataBase.getChildren().addAll(dataBaseSession, fileListView, deleteSessionFiles, deleteDataFiles);
+            
+            
+            });
+            
+            
+            
+            Button shredSelected = new Button("Shred selected file");
+            VBox MacDataBase = new VBox();
+
+            
+            final StringProperty selectedItemProperty = new SimpleStringProperty();
+            Label selectedLabel = new Label("Selected: None");
+            selectedLabel.setStyle("-fx-text-fill: black;");
+            
+            fileListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if(newSelection != null) {
+
+                    processedItem = newSelection;
+
+                    selectedItemProperty.set(processedItem);
+                    System.out.println(ORANGE + "[SYSTEM METHOD] " + processedItem + " selected from fileListView" + RESET);
+                    selectedLabel.setText("Selected: " + processedItem);
+
+                } else {
+                    selectedItemProperty.set(null);
+                    selectedLabel.setText("Selected: None");
+
+                }            
+            
+            });
+            shredSelected.setOnAction(buttonEvent -> {
+                String command = "sudo shred -u /home/User1/Desktop/DOBBYprgrm/DOBBYData/" + processedItem;
+                startCommand(command, terminalOutput);
+                System.out.print(ORANGE + "[SYSTEM METHOD] Running shred command on file: " + processedItem + RESET);
+                
+            
+            
+            });
+            
+            
+            Button regenDataBase = new Button("create new all time DataBase");
+            regenDataBase.setOnAction(buttonEvent -> {
+                String fileName = "DataBase.csv";
+                File file = new File(directory, fileName);
+                try {
+                    if (!file.getParentFile().exists()) {
+                        System.out.println(ORANGE + "[SYSTEM METHOD] Directory does not exist" + RESET);
+                        terminalOutput.setText("ERROR: terminal does not exist");
+                        return;
+                    
+                    
+                    }
+                    if (file.createNewFile()) {
+                        System.out.println(ORANGE + "[SYSTEM METHOD] DataBase.csv created successfully" + RESET);
+                        terminalOutput.setText("Success");
+                    } else {
+                        System.out.println(ORANGE + "[SYSTEM METHOD] ERROR: file already exists" + RESET);
+                        terminalOutput.setText("ERROR: File already exists");
+                    
+                    
+                    }
+                
+                } catch (IOException e) {
+                    System.out.println(ORANGE + "[SYSTEM METHOD] ERROR:" + RESET);
+                    e.printStackTrace();
+                
+                }
+            
+            
+            }); 
+            
+            
+            
+            MacDataBase.getChildren().addAll(dataBaseSession, fileListView, selectedLabel, terminalOutput, deleteDataFiles, shredSelected, regenDataBase);
             
             contentPane.getChildren().addAll(MacDataBase);
+        
+        });
+        
+        
+        button3.setOnAction(event -> {
+            String directory = "/media/User1/";            
+            TextArea terminalOutput = new TextArea();
+            terminalOutput.setPrefHeight(20);
+            terminalOutput.setStyle("-fx-text-fill: black;");
+            System.out.println("Button3 pressed");
+            contentPane.getChildren().clear();
+            VBox USB = new VBox();
+            
+            ListView<String> fileListView = new ListView<>();
+            listFilesInFolder(directory, fileListView);
+            Label selectedLabel = new Label("Selected: None");            
+            
+            
+            Label dataBaseSession = new Label("Session Write to USB");
+
+            File folder = new File(directory);
+            if (!folder.exists()) {
+                System.out.print(ORANGE + "[SYSTEM METHOD] Directory does not exist: " + directory + RESET);
+            } else if (!folder.isDirectory()) {
+                System.out.println(ORANGE + "[SYSTEM METHOD] Path is not a directory: " + directory + RESET);
+            } else {
+                System.out.println(ORANGE + "[SYSTEM METHOD] Directory is valid" + RESET);
+            }
+            
+            final StringProperty selectedItemProperty = new SimpleStringProperty();
+            selectedLabel.setStyle("-fx-text-fill: black;");
+            
+            fileListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if(newSelection != null) {
+
+                    processedItem = newSelection;
+
+                    selectedItemProperty.set(processedItem);
+                    System.out.println(ORANGE + "[SYSTEM METHOD] " + processedItem + " selected from fileListView" + RESET);
+                    selectedLabel.setText("Selected: " + processedItem);
+
+                } else {
+                    selectedItemProperty.set(null);
+                    selectedLabel.setText("Selected: None");
+
+                }            
+            
+            });            
+            
+
+            Button writetousbDataFiles = new Button("Write to selected USB");
+            writetousbDataFiles.setOnAction(buttonEvent -> {              
+                System.out.println(ORANGE + "[SYSTEM METHOD] Parsing all files from dir: /home/User1/Desktop/DOBBYprgrm/DOBBYData/* to usb " + processedItem);
+                String command = "sudo cp /home/User1/Desktop/DOBBYprgrm/DOBBYData/* " + "/media/User1/" + processedItem;
+                startCommand(command, terminalOutput);
+            
+            });
+            
+            Button eject = new Button("Eject USB");
+            eject.setOnAction(buttonEvent -> {
+                String command = "sudo unmount /media/User1/" + processedItem;
+                System.out.println("[SYSTEM METHOD] Unmounting USB drive: " + processedItem);
+                startCommand(command, terminalOutput);
+                terminalOutput.setText("Unmounting USB drive: " + processedItem);
+                command = "sudo eject /media/User1/" + processedItem;
+                try {
+                    Thread.sleep(1000);
+                
+                } catch(InterruptedException e) {
+                    e.printStackTrace();
+                
+                }
+                
+                
+                startCommand(command, terminalOutput);
+                System.out.println("[SYSTEM METHOD] Ejecting USB drive: " + processedItem);
+                terminalOutput.setText("Ejecting USB drive: " + processedItem);
+            
+            });
+            
+            
+            USB.getChildren().addAll(dataBaseSession, fileListView, selectedLabel, writetousbDataFiles, eject);
+            contentPane.getChildren().addAll(USB);
+            
+                      
         
         });
         button4.setOnAction(event -> initializeMainScene(stage, root, new Text("BACK")));        
         
         
         
-        }
+        
 
 
-
+    }
     
     
     private void changeSceneTrainer(Stage stage, VBox root, Text newContent) {
@@ -615,6 +841,11 @@ public class GUI2 extends Application {
         String configFilePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYconfig.conf";
         String key = "interface"; 
         String interfaceName = readConfigFile(configFilePath, key, update);
+        
+        key = "target_mac";
+        String target1 = readConfigFile(configFilePath, key, update);
+        key = "target_mac2";
+        String target2 = readConfigFile(configFilePath, key, update);
 
         
         
@@ -637,21 +868,26 @@ public class GUI2 extends Application {
         
         Button button1 = new Button("START");
         Button button2 = new Button("STOP");
-        Button button3 = new Button("BACK");
+        Button button3 = new Button("Track SPECIFIC");
+        Button button4 = new Button("BACK");
         HBox buttonBox = new HBox();
-        buttonBox.getChildren().addAll(button1, button2, button3);
+        buttonBox.getChildren().addAll(button1, button2, button3, button4);
         button1.setMinHeight(300);
         button2.setMinHeight(300);
         button3.setMinHeight(300);
+        button4.setMinHeight(300);        
         button1.setStyle("-fx-font-size: 30px;");
         button2.setStyle("-fx-font-size: 30px;");
         button3.setStyle("-fx-font-size: 30px;");
+        button4.setStyle("-fx-font-size: 30px;");        
         HBox.setHgrow(button1, Priority.ALWAYS);
         HBox.setHgrow(button2, Priority.ALWAYS);
         HBox.setHgrow(button3, Priority.ALWAYS);
+        HBox.setHgrow(button4, Priority.ALWAYS);        
         button1.setMaxWidth(Double.MAX_VALUE);
         button2.setMaxWidth(Double.MAX_VALUE);
         button3.setMaxWidth(Double.MAX_VALUE);
+        button4.setMaxWidth(Double.MAX_VALUE);
 
         //Creating ListVew to display CSV
         ListView<String> listView = new ListView<>();
@@ -684,6 +920,7 @@ public class GUI2 extends Application {
             }
 
         });
+        
         
         // Add the ListView and buttons to the root layout
         VBox contentBox = new VBox(10, listView, buttonBox);
@@ -720,6 +957,9 @@ public class GUI2 extends Application {
                     break;
                 case DIGIT3:
                     button3.fire();
+                    break;
+                case DIGIT4:
+                    button4.fire();
                     break;
                 default:
                     break;
@@ -763,7 +1003,15 @@ public class GUI2 extends Application {
             terminalOutputtwo.setStyle("-fx-control-inner-background: darkred; -fx-text-fill: white;");
             
         });
-        button3.setOnAction(event -> changeSceneTrainer(stage, root, new Text("BACK")));
+        
+        button3.setOnAction(event -> {
+            items.add(0, "target1=," + target1);
+            items.add(0, "target2=," + target2);
+        });        
+        
+        
+        
+        button4.setOnAction(event -> changeSceneTrainer(stage, root, new Text("BACK")));
         // Go back to the main scene
     }
 
@@ -909,6 +1157,7 @@ public class GUI2 extends Application {
     
     private String interfaceName;
     private String trainerName;
+    private String targetName;
     private boolean update = false;
     private String newValue;
     
@@ -1097,10 +1346,13 @@ public class GUI2 extends Application {
                     while ((line = reader.readLine()) != null) {
                         String finalLine = line;
                         Platform.runLater(() -> terminalOutput.appendText(finalLine + "\n"));
+                        Platform.runLater(() -> terminalOutput.appendText("Success"));
+                        
                     }
                     
             } catch (Exception e) {
                 Platform.runLater(() -> terminalOutput.appendText(" Error: " + e.getMessage() + "\n"));
+                System.out.println(RED + "[SYSTEM WORKER METHOD] ERROR " + e.getMessage() + " running command was not successfull");
             
             }
         }).start();
@@ -1125,3 +1377,4 @@ public class GUI2 extends Application {
         launch(args);
     }
 }
+
