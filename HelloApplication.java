@@ -42,7 +42,8 @@ import java.util.List;
 import java.util.ArrayList;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
@@ -86,23 +87,19 @@ public class GUI2 extends Application {
         
         Image logo = new Image("file:/home/User1/Desktop/DOBBYprgrm/Images/logo2.png");
         ImageView logoView = new ImageView(logo);
-        logoView.setFitWidth(200);
+        logoView.setPreserveRatio(true);
+        logoView.setFitWidth(50);
 
+        ListView<String> disclaim = new ListView<>();
+        String filePath = "/home/User1/Desktop/DOBBYprgrm/Disclaimer.csv";
+        List<String> disclaimCSV = readCSV(filePath);
+        disclaim.getItems().addAll(disclaimCSV);
+        disclaim.setPrefHeight(800);
 
-        String legal = "READ BEFORE USE"
-        + "lorem isum lorem more " 
-        + "lomen grger ger ger greg e" 
-        + "gpremgpemrgåemrgåmerogåmeroågm"
-        + "goremgoierognreognorengoneorgr" 
-        + "grmeogmermgermgoergoegnropginer";
-        Label scrollLegal = new Label(legal);
-        scrollLegal.setStyle("-fx-font-size: 10px;");
-        scrollLegal.setStyle("-fx-background-color: #808080;");
-        scrollLegal.setWrapText(true);
-        ScrollPane scrollpane = new ScrollPane(scrollLegal);
-        scrollpane.setFitToWidth(true); 
-        VBox logoBox = new VBox(logoView, scrollpane);
-        logoBox.setAlignment(Pos.TOP_LEFT);        
+        
+        VBox logoBox = new VBox(logoView, disclaim);
+        logoBox.setAlignment(Pos.TOP_LEFT);    
+            
         
         
         // Create buttons for the main scene
@@ -112,15 +109,16 @@ public class GUI2 extends Application {
         Button button4 = new Button("SETTINGS");
         HBox buttonBox = new HBox();
         buttonBox.getChildren().addAll(button1, button2, button3, button4);
-        button1.setMinHeight(300);
-        button2.setMinHeight(300);
-        button3.setMinHeight(300);
-        button4.setMinHeight(300);
 
-        button1.setStyle("-fx-font-size: 30px;");
-        button2.setStyle("-fx-font-size: 30px;");
-        button3.setStyle("-fx-font-size: 30px;");
-        button4.setStyle("-fx-font-size: 30px;");
+        button1.setMinHeight(100);
+        button2.setMinHeight(100);
+        button3.setMinHeight(100);
+        button4.setMinHeight(100);
+
+        button1.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #1D1D1D; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button2.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button3.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button4.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
 
         // Make buttons grow and take available space
         HBox.setHgrow(button1, Priority.ALWAYS);
@@ -138,7 +136,7 @@ public class GUI2 extends Application {
         root.getChildren().addAll(logoBox, buttonBox);
         root.setAlignment(Pos.BOTTOM_CENTER);
         root.setPrefHeight(800);
-        root.setStyle("-fx-background-color: #808080;");
+        root.setStyle("-fx-background-color: #373D4E;");
 
 
         root.setOnKeyPressed(event -> {
@@ -193,12 +191,12 @@ public class GUI2 extends Application {
         // Add the buttons to the root
         
         Pane contentPane = new Pane();
-        contentPane.setStyle("-fx-background-color: #FFFFFF;");
+        contentPane.setStyle("-fx-background-color: #B2C0D0;");
         
         splitPane.getItems().addAll(buttonBox, contentPane);
         buttonBox.setMinWidth(100);
         buttonBox.setMaxWidth(200);
-        
+        buttonBox.setStyle("-fx-background-color: #373D4E;");
         VBox.setVgrow(splitPane, Priority.ALWAYS);
         root.getChildren().add(splitPane);
         
@@ -546,12 +544,12 @@ public class GUI2 extends Application {
         Button button3 = new Button("BACK");
         HBox buttonBox = new HBox();
         buttonBox.getChildren().addAll(button1, button2, button3);
-        button1.setMinHeight(300);
-        button2.setMinHeight(300);
-        button3.setMinHeight(300);
-        button1.setStyle("-fx-font-size: 30px;");
-        button2.setStyle("-fx-font-size: 30px;");
-        button3.setStyle("-fx-font-size: 30px;");
+        button1.setMinHeight(100);
+        button2.setMinHeight(100);
+        button3.setMinHeight(100);
+        button1.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button2.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button3.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
         HBox.setHgrow(button1, Priority.ALWAYS);
         HBox.setHgrow(button2, Priority.ALWAYS);
         HBox.setHgrow(button3, Priority.ALWAYS);
@@ -563,7 +561,7 @@ public class GUI2 extends Application {
         root.getChildren().add(buttonBox);
         root.setAlignment(Pos.BOTTOM_CENTER);
         root.setPrefHeight(800);
-        root.setStyle("-fx-background-color: #808080;");
+        root.setStyle("-fx-background-color: #373D4E;");
 
 
         root.setOnKeyPressed(event -> {
@@ -585,7 +583,7 @@ public class GUI2 extends Application {
 
 
         // Set actions for the new buttons
-        button1.setOnAction(event -> changeSceneTRAIN(stage, root, new Text("TRAINING")));  // Keeping the scene the same
+        button1.setOnAction(event -> changeSceneTRAIN(stage, root, new Text("")));  // Keeping the scene the same
         button2.setOnAction(event -> changeSceneTRACK(stage, root, new Text("TRACKING")));
         button3.setOnAction(event -> initializeMainScene(stage, root, new Text("MAIN")));
         // Go back to the main scene
@@ -614,12 +612,12 @@ public class GUI2 extends Application {
         Button button3 = new Button("BACK");
         HBox buttonBox = new HBox();
         buttonBox.getChildren().addAll(button1, button2, button3);
-        button1.setMinHeight(300);
-        button2.setMinHeight(300);
-        button3.setMinHeight(300);
-        button1.setStyle("-fx-font-size: 30px;");
-        button2.setStyle("-fx-font-size: 30px;");
-        button3.setStyle("-fx-font-size: 30px;");
+        button1.setMinHeight(100);
+        button2.setMinHeight(100);
+        button3.setMinHeight(100);
+        button1.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button2.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button3.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
         HBox.setHgrow(button1, Priority.ALWAYS);
         HBox.setHgrow(button2, Priority.ALWAYS);
         HBox.setHgrow(button3, Priority.ALWAYS);
@@ -629,7 +627,7 @@ public class GUI2 extends Application {
 
         //Creating ListVew to display CSV
         ListView<String> listView = new ListView<>();
-        listView.setPrefHeight(400);
+        listView.setPrefHeight(800);
         String filePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYData/DataBase.csv";
 
         // Initial population of ListView
@@ -642,7 +640,7 @@ public class GUI2 extends Application {
         contentBox.setAlignment(Pos.CENTER);
 
         root.getChildren().addAll(terminalOutput, contentBox);
-        root.setStyle("-fx-background-color: #808080;");
+        root.setStyle("-fx-background-color: #373D4E;");
         
         if (gnomeTerminalPid == null) {
                 terminalOutput.setText("Not Running");
@@ -735,7 +733,7 @@ public class GUI2 extends Application {
         
         TextArea terminalOutput = new TextArea();
         terminalOutput.setEditable(false);
-        terminalOutput.setPrefHeight(0);
+        terminalOutput.setPrefHeight(800);
         terminalOutput.setStyle("-fx-font-size: 14px;");
         terminalOutput.setWrapText(true);
 
@@ -745,12 +743,12 @@ public class GUI2 extends Application {
         Button button3 = new Button("BACK");
         HBox buttonBox = new HBox();
         buttonBox.getChildren().addAll(button1, button2, button3);
-        button1.setMinHeight(300);
-        button2.setMinHeight(300);
-        button3.setMinHeight(300);
-        button1.setStyle("-fx-font-size: 30px;");
-        button2.setStyle("-fx-font-size: 30px;");
-        button3.setStyle("-fx-font-size: 30px;");
+        button1.setMinHeight(100);
+        button2.setMinHeight(100);
+        button3.setMinHeight(100);
+        button1.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button2.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button3.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
         HBox.setHgrow(button1, Priority.ALWAYS);
         HBox.setHgrow(button2, Priority.ALWAYS);
         HBox.setHgrow(button3, Priority.ALWAYS);
@@ -764,11 +762,11 @@ public class GUI2 extends Application {
 
 
         // Add the buttons to the root
-        VBox contentBox = new VBox(10, buttonBox);
+        VBox contentBox = new VBox(buttonBox);
         contentBox.setAlignment(Pos.CENTER);
         
         root.getChildren().addAll(terminalOutputtwo,terminalOutput, buttonBox);
-        root.setStyle("-fx-background-color: #808080;");
+        root.setStyle("-fx-background-color: #373D4E;");
         
 
         terminalOutputtwo.setText("Not Running");
@@ -777,7 +775,6 @@ public class GUI2 extends Application {
         
         terminalOutput.appendText("Press start to start scan");
         
-        terminalOutput.setPrefHeight(stage.getHeight() * 0.2); 
 
 
 
@@ -820,8 +817,9 @@ public class GUI2 extends Application {
 
         });  // Keeping the scene the same
         button2.setOnAction(event -> {
-            stopCommand(terminalOutput);
-
+            String command = "sudo kill -9 " + execPid;
+            startCommand(command, terminalOutput);
+                
             terminalOutputtwo.setText("Not Running");
             terminalOutputtwo.setStyle("-fx-control-inner-background: darkred; -fx-text-fill: white;");
                        
@@ -872,14 +870,14 @@ public class GUI2 extends Application {
         Button button4 = new Button("BACK");
         HBox buttonBox = new HBox();
         buttonBox.getChildren().addAll(button1, button2, button3, button4);
-        button1.setMinHeight(300);
-        button2.setMinHeight(300);
-        button3.setMinHeight(300);
-        button4.setMinHeight(300);        
-        button1.setStyle("-fx-font-size: 30px;");
-        button2.setStyle("-fx-font-size: 30px;");
-        button3.setStyle("-fx-font-size: 30px;");
-        button4.setStyle("-fx-font-size: 30px;");        
+        button1.setMinHeight(100);
+        button2.setMinHeight(100);
+        button3.setMinHeight(100);
+        button4.setMinHeight(100);        
+        button1.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button2.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button3.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button4.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");        
         HBox.setHgrow(button1, Priority.ALWAYS);
         HBox.setHgrow(button2, Priority.ALWAYS);
         HBox.setHgrow(button3, Priority.ALWAYS);
@@ -927,7 +925,7 @@ public class GUI2 extends Application {
         contentBox.setAlignment(Pos.CENTER);
         
         root.getChildren().addAll(terminalOutputtwo, terminalOutput, listView, selectedLabel, buttonBox);
-        root.setStyle("-fx-background-color: #808080;");
+        root.setStyle("-fx-background-color: #373D4E;");
 
         terminalOutputtwo.setText("Not Running");
         terminalOutputtwo.setStyle("-fx-control-inner-background: darkred; -fx-text-fill: white;");
@@ -998,6 +996,8 @@ public class GUI2 extends Application {
             //    KillGnomeTerminal(gnomeTerminalPid);
             //    gnomeTerminalPid = null;
             //}
+
+
             stopCommand(terminalOutput);
             terminalOutputtwo.setText("Not running");
             terminalOutputtwo.setStyle("-fx-control-inner-background: darkred; -fx-text-fill: white;");
@@ -1023,19 +1023,58 @@ public class GUI2 extends Application {
 
         // Add the new content
         root.getChildren().add(newContent);
-
+        
+        Label titleLabel = new Label("TRAINING");
+        titleLabel.setStyle("-fx-background-color: #FFB834; -fx-font-size: 15px;");
+        // adding list from config trainer_mac
+        String configFilePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYconfig.conf";
+        String key = "interface"; 
+        String interfaceName = readConfigFile(configFilePath, key, update);
+        
+        key = "trainer_mac1";
+        String train1 = readConfigFile(configFilePath, key, update);
+        key = "trainer_mac2";
+        String train2 = readConfigFile(configFilePath, key, update);
+        
+        
+        TextArea terminalOutputtwo = new TextArea();
+        terminalOutputtwo.setEditable(false);
+        terminalOutputtwo.setPrefHeight(3);
+        terminalOutputtwo.setStyle("-fx-font-size: 14px;");
+        terminalOutputtwo.setWrapText(true);
+        terminalOutputtwo.setText("Not running");           
+        terminalOutputtwo.setStyle("-fx-control-inner-background: darkred; -fx-text-fill: white;");        
+         
+        TextArea terminalOutput = new TextArea();
+        terminalOutput.setEditable(false);
+        terminalOutput.setPrefHeight(800);
+        terminalOutput.setStyle("-fx-font-size: 14px;");
+        terminalOutput.setWrapText(true);        
+      
+        
+        
+        TextArea configdata = new TextArea();
+        configdata.setEditable(false);
+        configdata.setPrefHeight(10);
+        configdata.setStyle("-fx-font-size: 14px;");
+        configdata.setWrapText(true);        
+        
+        configdata.appendText(train1 + "\n");
+        configdata.appendText(train2);
+        
+        
         // Create new buttons for the trainer scene
         Button button1 = new Button("START");
         Button button2 = new Button("STOP");
         Button button3 = new Button("BACK");
         HBox buttonBox = new HBox();
         buttonBox.getChildren().addAll(button1, button2, button3);
-        button1.setMinHeight(300);
-        button2.setMinHeight(300);
-        button3.setMinHeight(300);
-        button1.setStyle("-fx-font-size: 30px;");
-        button2.setStyle("-fx-font-size: 30px;");
-        button3.setStyle("-fx-font-size: 30px;");
+        button1.setMinHeight(100);
+        button2.setMinHeight(100);
+        button3.setMinHeight(100);
+        button1.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button2.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        button3.setStyle("-fx-font-size: 10px; -fx-background-color: #B2C0D0; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 5px;");
         HBox.setHgrow(button1, Priority.ALWAYS);
         HBox.setHgrow(button2, Priority.ALWAYS);
         HBox.setHgrow(button3, Priority.ALWAYS);
@@ -1043,11 +1082,17 @@ public class GUI2 extends Application {
         button2.setMaxWidth(Double.MAX_VALUE);
         button3.setMaxWidth(Double.MAX_VALUE);
 
+
+
+
+
+
+
         // Add the buttons to the root
-        root.getChildren().add(buttonBox);
+        root.getChildren().addAll(titleLabel, terminalOutputtwo, terminalOutput, configdata, buttonBox);
         root.setAlignment(Pos.BOTTOM_CENTER);
         root.setPrefHeight(800);
-        root.setStyle("-fx-background-color: #f4f4f4;");
+        root.setStyle("-fx-background-color: #FFB834;");
 
         root.setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -1068,8 +1113,24 @@ public class GUI2 extends Application {
 
 
         // Set actions for the new buttons
-        button1.setOnAction(event -> changeSceneTRAIN(stage, root, newContent));  // Keeping the scene the same
-        button2.setOnAction(event -> changeSceneTRAIN(stage, root, newContent));
+        button1.setOnAction(event -> {
+            String command = "sudo tcpdump -i " + interfaceName + " ether host " + train1 + " or host " + train2;
+            System.out.println("sudo tcpdump -i " + interfaceName + " ether host " + train1 + " or host " + train2);
+            System.out.println("Running tcpdump on: " + train1 + " and " + train2 + " with interface: " + interfaceName);
+            startCommand(configFilePath, terminalOutput);
+            terminalOutputtwo.setStyle("-fx-control-inner-background: green; -fx-text-fill: white;");
+            terminalOutputtwo.setText("Running");            
+        
+        });  // Keeping the scene the same
+        button2.setOnAction(event -> {
+            stopCommand(terminalOutput);    
+            String command = "sudo kill -9 " + execPid;
+            startCommand(command, terminalOutput);
+            terminalOutputtwo.setStyle("-fx-control-inner-background: darkred; -fx-text-fill: white;");
+            
+            terminalOutputtwo.setText("Not running");    
+        
+        });
         button3.setOnAction(event -> changeSceneTrainer(stage, root, new Text("BACK")));
         // Go back to the main scene
     }
@@ -1120,7 +1181,7 @@ public class GUI2 extends Application {
 
             String pidString = reader.readLine();
             if (pidString != null && !pidString.isEmpty()) {
-                System.out.println(RED + "[SYSTEM WORKER METHOD] Started gnome-terminal with PID: " + pidString + RESET);
+                System.out.println(RED + "[SYSTEM WORKER METHOD] Started gnome-terminal with PID: " + pidString);
                 return Long.parseLong(pidString.trim()); // Return the PID as a Long
             } else {
                 System.out.println(RED + "[SYSTEM WORKER METHOD] ERROR Failed to retrieve gnome-terminal PID." + RESET);
@@ -1332,13 +1393,25 @@ public class GUI2 extends Application {
 
     }
     private Process commandProcess; 
+    private String execPid;
+
     private void startCommand(String command, TextArea terminalOutput) {
         new Thread(() -> {
             try {    
                     ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", command);
                     processBuilder.redirectErrorStream(true);
                     commandProcess = processBuilder.start();
-
+                    String commandProcessString = commandProcess.toString();
+                    System.out.println(RED + "[SYSTEM WORKER METHOD] processing commandProsses to string output: " + commandProcessString);
+                    int pidStart = commandProcessString.indexOf("pid=") + 4;
+                    System.out.println("[SYSTEM WORKER METHOD] Using indexOf on commandProcessString, output: " + pidStart);
+                    if (pidStart - 4 == -1) {
+                        System.out.println("[SYSTEM WORKER METHOD] ERROR: pidStart == 3");
+                    }    
+                    int pidEnd = commandProcessString.indexOf(",", pidStart);
+                    String pidString = commandProcessString.substring(pidStart, pidEnd);
+                    System.out.println("[SYSTEM WORKER METHOD] pidString output: " + pidString);
+                    execPid = pidString;
                     
                     BufferedReader reader = new BufferedReader(new InputStreamReader(commandProcess.getInputStream())); 
                     String line;
@@ -1346,7 +1419,6 @@ public class GUI2 extends Application {
                     while ((line = reader.readLine()) != null) {
                         String finalLine = line;
                         Platform.runLater(() -> terminalOutput.appendText(finalLine + "\n"));
-                        Platform.runLater(() -> terminalOutput.appendText("Success"));
                         
                     }
                     
@@ -1362,7 +1434,18 @@ public class GUI2 extends Application {
     
     
     private void stopCommand(TextArea terminalOutput) {
-
+        String commandProcessString = commandProcess.toString();
+        System.out.println(RED + "[SYSTEM WORKER METHOD] processing commandProsses to string output: " + commandProcessString);
+        int pidStart = commandProcessString.indexOf("pid=") + 4;
+        System.out.println("[SYSTEM WORKER METHOD] Using indexOf on commandProcessString, output: " + pidStart);
+        if (pidStart - 4 == -1) {
+        System.out.println("[SYSTEM WORKER METHOD] ERROR: pidStart == 3");
+        }    
+        int pidEnd = commandProcessString.indexOf(",", pidStart);
+        String pidString = commandProcessString.substring(pidStart, pidEnd);
+        System.out.println("[SYSTEM WORKER METHOD] pidString output: " + pidString);
+        execPid = pidString;
+                    
         if (commandProcess != null && commandProcess.isAlive()) {
             commandProcess.destroy();
             Platform.runLater(() -> terminalOutput.appendText("command Stopped \n"));
@@ -1376,5 +1459,3 @@ public class GUI2 extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-}
-
