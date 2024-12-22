@@ -27,8 +27,18 @@ hardware:
 ## Display cable for raspberry pi 5
 https://raspberrypi.dk/en/product/raspberry-pi-display-cable/
 
+
+
+
+
+
 4,3" DSI LCD
 https://raspberrypi.dk/en/product/43-dsi-lcd-display/
+Desc:
+res: 800x480
+
+
+
 
 raspberry pi model:
 https://raspberrypi.dk/en/product/raspberry-pi-4-model-b-8-gb/
