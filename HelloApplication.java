@@ -150,6 +150,9 @@ public class GUI2 extends Application {
                 case DIGIT3:
                     button3.fire();
                     break;
+                 case DIGIT4:
+                     button4.fire();
+                     break;
                 default:
                     break;
 
@@ -212,6 +215,9 @@ public class GUI2 extends Application {
                 case DIGIT3:
                     button3.fire();
                     break;
+                 case DIGIT4:
+                     button4.fire();
+                     break;
                 default:
                     break;
 
@@ -223,7 +229,7 @@ public class GUI2 extends Application {
         button1.setOnAction(event -> {
             contentPane.getChildren().clear();
             String key = "interface";
-                 
+            System.out.println(ORANGE + "[SYSTEM METHOD] Key set to: " + key);
             String interfaceName = readConfigFile(configFilePath, key, update);
             
             Text InterFaceName = new Text("DOBBYConfig.conf interface: " + interfaceName);
@@ -242,7 +248,7 @@ public class GUI2 extends Application {
             
             key = "target_mac";     
             String targetMacName = readConfigFile(configFilePath, key, update);            
-            
+            System.out.println(ORANGE + "[SYSTEM METHOD] Key set to: " + key);
             Text TargMacName = new Text("DOBBYConfig.conf target_mac: " + targetMacName);
             TextArea newMac = new TextArea();
             newMac.setPrefHeight(40);
@@ -261,7 +267,7 @@ public class GUI2 extends Application {
             
             key = "target_mac2";     
             String targetMacName2 = readConfigFile(configFilePath, key, update);            
-            
+            System.out.println(ORANGE + "[SYSTEM METHOD] Key set to: " + key);
             Text TargMacName2 = new Text("DOBBYConfig.conf target_mac2: " + targetMacName2);
             TextArea newMac2 = new TextArea();
             newMac2.setPrefHeight(40);
@@ -281,7 +287,7 @@ public class GUI2 extends Application {
             
             key = "trainer_mac1";     
             String trainerMacName1 = readConfigFile(configFilePath, key, update);            
-            
+            System.out.println(ORANGE + "[SYSTEM METHOD] Key set to: " + key);
             Text trainMacName1 = new Text("DOBBYConfig.conf trainer_mac1: " + trainerMacName1);
             TextArea newMac3 = new TextArea();
             newMac3.setPrefHeight(40);
@@ -300,7 +306,7 @@ public class GUI2 extends Application {
             
             key = "trainer_mac2";     
             String trainerMacName2 = readConfigFile(configFilePath, key, update);            
-            
+            System.out.println(ORANGE + "[SYSTEM METHOD] Key set to: " + key);
             Text trainMacName2 = new Text("DOBBYConfig.conf trainer_mac2: " + trainerMacName2);
             TextArea newMac4 = new TextArea();
             newMac4.setPrefHeight(40);
@@ -838,11 +844,14 @@ public class GUI2 extends Application {
         
         String configFilePath = "/home/User1/Desktop/DOBBYprgrm/DOBBYconfig.conf";
         String key = "interface"; 
+        System.out.println(ORANGE + "[SYSTEM METHOD] Key set to: " + key);
         String interfaceName = readConfigFile(configFilePath, key, update);
         
         key = "target_mac";
+        System.out.println(ORANGE + "[SYSTEM METHOD] Key set to: " + key);
         String target1 = readConfigFile(configFilePath, key, update);
         key = "target_mac2";
+        System.out.println(ORANGE + "[SYSTEM METHOD] Key set to: " + key);
         String target2 = readConfigFile(configFilePath, key, update);
 
         
@@ -1032,8 +1041,10 @@ public class GUI2 extends Application {
         String interfaceName = readConfigFile(configFilePath, key, update);
         
         key = "trainer_mac1";
+        System.out.println(ORANGE + "[SYSTEM METHOD] Key set to: " + key);
         String train1 = readConfigFile(configFilePath, key, update);
         key = "trainer_mac2";
+        System.out.println(ORANGE + "[SYSTEM METHOD] Key set to: " + key);
         String train2 = readConfigFile(configFilePath, key, update);
         
         
