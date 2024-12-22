@@ -150,9 +150,9 @@ public class GUI2 extends Application {
                 case DIGIT3:
                     button3.fire();
                     break;
-                 case DIGIT4:
-                     button4.fire();
-                     break;
+                case DIGIT4:
+                    button4.fire();
+                    break;
                 default:
                     break;
 
@@ -215,9 +215,9 @@ public class GUI2 extends Application {
                 case DIGIT3:
                     button3.fire();
                     break;
-                 case DIGIT4:
-                     button4.fire();
-                     break;
+                case DIGIT4:
+                    button4.fire();
+                    break;
                 default:
                     break;
 
