@@ -1,0 +1,185 @@
+READ BEFORE USE
+
+
+TCPDUMP
+
+This software uses TCPDUMP which is distrubuted under the BSD 3-Clause License.
+The TCPDUMP software and related code are copyrighted by the authors of tcpdump.
+Copyright (c) 1989-2024 The tcpdump group, All rights reserved.
+
+Redistribution and use of source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+1. Redistributions of source code must retain the above copyright notice, this list of conditions, and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions, and the following disclaimer in the documentation and/or other materials provided with the distribution.
+3. Neither the name of The tcpdump group nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+  
+This software is provided "as is," without any express or implied warranties, including but not limited to the implied 
+warranties of merchantability and fitness for a particular purpose. In no event shall the copyright holder or 
+contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, 
+but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) 
+however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) 
+arising in any way out of the use of this software, even if advised of the possibility of such damage.
+
+
+DOBBY SOFTWARE ON TCPDUMP:
+DOBBY is created in 2024 and includes the tcpdump software as a tool. All usage of tcpdump within DOBBY is governed by the same disclaimer as TCPDUMP itself, and it is subject to the terms of the BSD 3-Clause License.
+KEY AUTHORS:
+The tcpdump group
+Van Jacobson
+Craig Leres
+Steve Deering
+Mike Karels
+Brian L. Stuart
+Mark Allman
+
+important note:
+By using TCPDUMP with DOBBY, you agree to the terms of the BSD 3-Clause License for tcpdump, and you are responsible for ensuring that your use of the 
+software complies with all applicable laws, including any laws regarding network monitoring and privacy.
+for more information about tcpdump, including full source code and documentation visit the official website:
+https://www.tcpdump.org
+
+
+SCAPY
+This software uses Scapy, which is distributed under the GPLv2 License. The Scapy software and related code are copyrighted by the authors of Scapy.
+Copyright (c) 2004-2024 The Scapy Group, All rights reserved.
+
+Scapy is a powerful interactive packet manipulation program. It is used for creating, manipulating, and sending network packets. 
+Scapy is provided as open-source software under the terms of the GPLv2.
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+1. Redistributions of source code must retain the above copyright notice, this list of conditions, and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions, and the following disclaimer in the documentation and/or other materials provided with the distribution.
+3. When redistributing or using Scapy with modified versions of the code, you must make the source code available to recipients under the same GPLv2 terms.
+4. Neither the name of Scapy nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+This software is provided "as is," without any express or implied warranties, including but not limited to the implied warranties of merchantability and fitness for a particular purpose. 
+In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) 
+however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
+
+DOBBY SOFTWARE ON SCAPY
+DOBBY is created in 2024 and includes Scapy software as a tool. All usage of Scapy within DOBBY is governed by the same disclaimer as Scapy itself and is subject to the terms of the GPLv2 License.
+
+KEY AUTHORS:
+The Scapy Group
+Philippe Biondi
+Other contributors (for full list: https://github.com/secdev/scapy/graphs/contributors)
+
+IMPORTANT NOTE:
+By using Scapy with DOBBY, you agree to the terms of the GPLv2 License for Scapy, 
+and you are responsible for ensuring that your use of the software complies with all applicable laws, 
+including any laws regarding network monitoring and privacy.
+
+For more information about Scapy, including full source code and documentation, visit the official website:
+https://scapy.net
+
+
+
+
+                    
+JAVAFX
+This software uses JavaFX, which is part of the OpenJDK project. 
+JavaFX is distributed under the GNU General Public License, version 2 (GPLv2), with the Classpath Exception.
+
+JavaFX is released under the GPLv2 with Classpath Exception.
+The JavaFX software and related code are copyrighted by Oracle and the contributors to the OpenJDK project.
+
+Copyright (c) 2024 Oracle and/or its affiliates
+
+
+1. You can redistribute JavaFX and its code in both source and binary form, with or without modification.
+2. You can modify the JavaFX source code as long as you comply with the GPLv2 terms and provide appropriate credits and disclosures.
+3. The Classpath Exception allows you to link your programs with JavaFX without being required to release your own source code under the GPLv2, as long as your program is not derived from JavaFX itself.
+
+KEY AUTHORS
+Oracle Corporation
+OpenJDK Contributors (for full list see link: https://openjdk.java.net/contributors/)
+Former Sun Microsystems Developers
+
+for Repository of JavaFX:
+https://github.com/openjdk/jfx
+                      
+                    
+IMPORTANT NOTES
+By using JavaFX in this software, you agree to the terms of the GPLv2 with Classpath Exception.
+The Classpath Exception allows you to use JavaFX without the obligation to release your proprietary code, as long as you do not modify JavaFX itself.
+You are responsible for ensuring that your use of the software complies with all applicable laws.
+
+For more information about JavaFX and OpenJDK, you can visit the official OpenJDK website:
+https://openjdk.java.net/projects/javafx/
+
+                    
+
+                    
+JAVA
+
+The DOBBY software uses Java, which is distributed under the OpenJDK project, managed by Oracle Corporation. Java is licensed under the GNU General Public License v2 (GPLv2) with the Classpath Exception.
+For more information, see: OpenJDK License.
+
+
+KEY AUTHORS AND DEVELOPERS:
+
+James Gosling
+Mike Sheridan
+Sun Microsystems
+Oracle Corporation
+Open JDK Contributors (https://openjdk.java.net/contributors/)
+
+
+
+                      
+DOBBY
+By using this software, you acknowledge and agree to the following terms and conditions. If you do not agree with these terms, you must refrain from using the software.
+
+DOBBY is designed to facilitate network monitoring and packet manipulation, utilizing tools like TCPDUMP, and Scapy.
+The software is intended for legal, ethical, and authorized use only. Unauthorized use of this software for monitoring networks or devices without proper consent may violate local, state, or international laws.
+It is the responsibility of the user to ensure they comply with applicable laws, including but not limited to privacy, data protection, and cybersecurity regulations.
+
+This software integrates with or relies on various third-party libraries, and you are responsible for ensuring you have the proper licenses and permissions to use them. Some third-party components include
+
+Licenses:
+BSD 3-Clause License
+GPLv2 License
+
+The software is provided "as is" without any warranties or guarantees. The authors, contributors, or anyone involved in the development of DOBBY are not responsible for any damages, whether direct, indirect, incidental, special, consequential, or punitive, arising from the use of this software.
+
+You, the user, assume all risks related to the use of the software. This includes any legal, financial, or technical issues that may arise from using the software to monitor or manipulate networks and data. You agree not to hold the developers or any contributors liable for damages or consequences arising from your use or misuse of the software.
+You agree that you will not use DOBBY for illegal activities, including but not limited to unauthorized network monitoring, data interception, packet sniffing, or other activities that violate privacy rights or any other applicable laws.
+You are responsible for ensuring that you have appropriate authorization or consent to monitor networks or devices before using this software.
+
+The user is not allowed to sell, resell, Distribute or Copy the software without the express written permission of the developer. 
+Redistribution of DOBBY, whether in source code or binary form, is not allowed without prior written consent from the developer. This includes making the software available for download or for distribution by any other means.
+The user is not permitted to reverse-engineer, decompile, dissasemble or create derivitative works based on DOBBY, unless expressly authorized by the developer.
+The user may especially not reverse-engineer or decompile with the goal of creating their own version of DOBBY to replace the provided software.
+
+CONCLUSION
+When using DOBBY the user takes ALL responsibility, the developer can not be held accountable for any illegal actions performed using the software.
+
+                       
+                       
+                       
+                       
+                       
+
+
+                       
+
+                       
+                       
+
+                       
+
+                       
+                       
+                       
+
+                       
+
+                      
+                    
+                    
+                    
+
+                    
+
+                    
+
+                    
